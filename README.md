@@ -44,7 +44,7 @@ flowchart LR
 | Backend | Python 3.12, FastAPI, uv |
 | PDF extraction | PyMuPDF (font-aware) |
 | Retrieval | Hand-written BM25 + Roman Urdu/Urdu glossary |
-| LLM | Groq (`llama-3.3-70b-versatile`, configurable) |
+| LLM | Groq (`openai/gpt-oss-120b`, low reasoning effort, configurable) |
 | Verification | Deterministic citation / quote / number checker |
 | Frontend | Next.js 15 (App Router), TypeScript, plain CSS |
 | Hosting | Render (API), Vercel (web) |

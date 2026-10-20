@@ -20,7 +20,8 @@ def _origins() -> list[str]:
 @dataclass(frozen=True)
 class Settings:
     groq_api_key: str = os.getenv("GROQ_API_KEY", "")
-    groq_model: str = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+    groq_model: str = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
+    reasoning_effort: str = os.getenv("GROQ_REASONING_EFFORT", "low")  # gpt-oss: low | medium | high
     groq_base_url: str = os.getenv("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
     data_dir: Path = Path(os.getenv("DAFA_DATA_DIR", BACKEND_DIR / "data" / "processed"))
     raw_dir: Path = BACKEND_DIR / "data" / "raw"

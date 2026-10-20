@@ -1,27 +1,31 @@
 {
   "summary": {
-    "when": "2026-10-20T07:19:55+00:00",
-    "mode": "retrieval",
+    "when": "2026-10-20T08:35:40+00:00",
+    "mode": "full",
     "prompt_version": "v1",
-    "model": null,
-    "n": 56,
-    "pass_rate": 0.893,
-    "hit@5": 0.88,
-    "recall@5": 0.745,
-    "mrr": 0.705,
-    "verified_rate": null,
+    "model": "openai/gpt-oss-120b",
+    "n": 59,
+    "pass_rate": 0.407,
+    "hit@5": 0.94,
+    "recall@5": 0.827,
+    "mrr": 0.834,
+    "verified_rate": 0.68,
     "by_type": {
       "lookup": {
         "n": 10,
-        "pass_rate": 1.0
+        "pass_rate": 0.6
+      },
+      "out_of_scope": {
+        "n": 3,
+        "pass_rate": 0.667
       },
       "rights": {
         "n": 12,
-        "pass_rate": 0.917
+        "pass_rate": 0.417
       },
       "roman_ur": {
         "n": 7,
-        "pass_rate": 1.0
+        "pass_rate": 0.143
       },
       "schedule": {
         "n": 6,
@@ -29,25 +33,25 @@
       },
       "situation": {
         "n": 17,
-        "pass_rate": 0.706
+        "pass_rate": 0.118
       },
       "urdu": {
         "n": 4,
-        "pass_rate": 1.0
+        "pass_rate": 0.5
       }
     },
     "by_split": {
       "dev": {
-        "n": 44,
-        "pass_rate": 0.977,
-        "hit@5": 0.974,
-        "mrr": 0.81
+        "n": 47,
+        "pass_rate": 0.468,
+        "hit@5": 1.0,
+        "mrr": 0.9
       },
       "heldout": {
         "n": 12,
-        "pass_rate": 0.583,
-        "hit@5": 0.583,
-        "mrr": 0.371
+        "pass_rate": 0.167,
+        "hit@5": 0.75,
+        "mrr": 0.625
       }
     }
   },
@@ -60,11 +64,16 @@
       "got": [
         "ppc:302"
       ],
+      "answer": "Section 302 of the Pakistan Penal Code states that a person who commits qatl‑e‑amd (murder) may be punished with death as qisas, or with death or life imprisonment as taʿzīr, or with imprisonment up to twenty‑ five years where qisas is not applicable; however, if the principle of fasad‑fil‑arz is attracted, only the death or life‑imprisonment options apply [ppc:302].\n\nIn practice this means the court can order capital punishment, a life sentence, or a term of up to twenty‑ five years depending on the circumstances and Islamic injunctions, but the lesser term is excluded when fasad‑fil‑arz is involved.",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
+      "facts": true,
       "pass": true,
-      "ms": 1
+      "ms": 4812
     },
     {
       "id": "lookup-02",
@@ -74,11 +83,16 @@
       "got": [
         "ppc:489-F"
       ],
+      "answer": "Section 489-F ke mutabiq, agar koi shakhs ghalat niyat se cheque issue kare aur woh cheque present karne par dishonour ho jaye, to usay teen saal tak ki qaid, jurmana, ya dono saza mil sakti hai, aur yeh bailable nahi hai [ppc:489-F].\n\nIska matlab hai ke cheque fraud ek serious offence hai; court se arrest bina warrant ke ho sakta hai aur case magistrate of first class ke samne chalaya jata hai. Agar accused sabit kar sake ke bank ki galti thi, to uska burden of proof us par hota hai.",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
+      "language": true,
       "pass": true,
-      "ms": 2
+      "ms": 2078
     },
     {
       "id": "lookup-03",
@@ -88,11 +102,16 @@
       "got": [
         "ppc:420"
       ],
+      "answer": "Section 420 of the Pakistan Penal Code makes cheating that dishonestly induces delivery of property punishable by up to seven years’ imprisonment and a fine. The offence is cognizable, bailable, may be compounded with court permission, and is tried by a Court of Session or a first‑class Magistrate. [ppc:420]",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
+      "facts": true,
       "pass": true,
-      "ms": 1
+      "ms": 6061
     },
     {
       "id": "lookup-04",
@@ -106,11 +125,16 @@
         "ppc:351",
         "ppc:108"
       ],
+      "answer": "Article 25A guarantees the right to education. It obliges the State to provide free, compulsory schooling for every child aged five to sixteen, in a manner set by law. This means the government must ensure that all children in this age group can attend school without paying fees, and must enact legislation detailing how the education system will be delivered.\n\n[constitution:25A]",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
+      "facts": true,
       "pass": true,
-      "ms": 1
+      "ms": 1047
     },
     {
       "id": "lookup-05",
@@ -124,11 +148,16 @@
         "ppc:67",
         "constitution:198"
       ],
+      "answer": "Article 10A guarantees that anyone whose civil rights and obligations are being determined, or who faces any criminal charge, is entitled to a fair trial and due process [constitution:10A]. In short, it enshrines the right to a fair and lawful hearing before a court.",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
+      "facts": true,
       "pass": true,
-      "ms": 1
+      "ms": 14468
     },
     {
       "id": "lookup-06",
@@ -142,11 +171,16 @@
         "ppc:72",
         "ppc:2"
       ],
+      "answer": "Section 379 states that a person convicted of theft may be sentenced to imprisonment for a term which may extend to three years, or to a fine, or to both. The schedule confirms the same maximum term of three years and the option of a fine or both punishments.",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
-      "pass": true,
-      "ms": 1
+      "verified": true,
+      "cites_expected": false,
+      "facts": false,
+      "pass": false,
+      "ms": 2593
     },
     {
       "id": "lookup-07",
@@ -156,11 +190,17 @@
       "got": [
         "ppc:124-A"
       ],
+      "answer": "Here are the sections that best match your question. Open a card to read the full text.",
+      "warnings": [
+        "The answer writer is unavailable right now; showing the matching sections."
+      ],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
-      "pass": true,
-      "ms": 1
+      "verified": false,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 24875
     },
     {
       "id": "lookup-08",
@@ -174,11 +214,18 @@
         "constitution:5",
         "constitution:203A"
       ],
+      "answer": "Here are the sections that best match your question. Open a card to read the full text.",
+      "warnings": [
+        "The answer writer is unavailable right now; showing the matching sections."
+      ],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
-      "pass": true,
-      "ms": 1
+      "verified": false,
+      "cites_expected": false,
+      "facts": false,
+      "pass": false,
+      "ms": 24781
     },
     {
       "id": "lookup-09",
@@ -188,11 +235,15 @@
       "got": [
         "ppc:506"
       ],
+      "answer": "Section 506 criminalises intimidation, punishable by imprisonment of up to two years, a fine, or both; if the threat involves death, grievous hurt, fire‑destruction, a capital offence or imputation of unchastity, the term can rise to seven years, also with fine or both. The offence is cognizable, bailable, not compoundable and tried by a magistrate of the first or second class or a Court of Session.",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
-      "pass": true,
-      "ms": 1
+      "verified": true,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 11687
     },
     {
       "id": "lookup-10",
@@ -202,11 +253,16 @@
       "got": [
         "ppc:406"
       ],
+      "answer": "No, Section 406 is not bailable. The schedule for this offence expressly states that it is ‘Not bailable.’ [ppc:406]",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
+      "facts": true,
       "pass": true,
-      "ms": 1
+      "ms": 7156
     },
     {
       "id": "situation-01",
@@ -215,16 +271,23 @@
       "query": "Someone stole my motorcycle from outside my house. What law applies?",
       "got": [
         "ppc:380",
+        "ppc:451",
         "ppc:454",
         "ppc:457",
-        "ppc:451",
         "constitution:258"
+      ],
+      "answer": "The theft of your motorcycle from outside your house is not covered by Section 380, which only criminalises theft **in a dwelling house** [ppc:380], nor by the house‑trespass sections that require unlawful entry [ppc:451]. You would need to rely on the general theft provisions of the Pakistan Penal Code (e.g., Section 379), which are not included in the provided context, so a lawyer should be consulted for the applicable law.",
+      "warnings": [
+        "Query rewriting unavailable; used direct search.",
+        "Quotes not found verbatim in the cited section: ['Whoever commits house‑trespass in order to the committing of any offence punisha']"
       ],
       "hit": true,
       "recall": 0.3333333333333333,
       "rr": 1.0,
-      "pass": true,
-      "ms": 3
+      "verified": false,
+      "cites_expected": true,
+      "pass": false,
+      "ms": 24531
     },
     {
       "id": "situation-02",
@@ -238,11 +301,18 @@
         "ppc:499",
         "ppc:424"
       ],
+      "answer": "Here are the sections that best match your question. Open a card to read the full text.",
+      "warnings": [
+        "Query rewriting unavailable; used direct search.",
+        "The answer writer is unavailable right now; showing the matching sections."
+      ],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
-      "pass": true,
-      "ms": 4
+      "verified": false,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 46016
     },
     {
       "id": "situation-03",
@@ -252,15 +322,21 @@
       "got": [
         "ppc:171-B",
         "ppc:171-E",
-        "ppc:21",
         "ppc:161",
-        "ppc:163"
+        "ppc:163",
+        "ppc:162"
+      ],
+      "answer": "Here are the sections that best match your question. Open a card to read the full text.",
+      "warnings": [
+        "The answer writer is unavailable right now; showing the matching sections."
       ],
       "hit": true,
       "recall": 1.0,
-      "rr": 0.25,
-      "pass": true,
-      "ms": 3
+      "rr": 0.3333333333333333,
+      "verified": false,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 41233
     },
     {
       "id": "situation-04",
@@ -274,11 +350,17 @@
         "ppc:321",
         "ppc:307"
       ],
+      "answer": "Yes, a threat to kill you is a criminal offence under Pakistan’s Penal Code as criminal intimidation. Section 503 makes anyone who threatens another with injury to his person liable for criminal intimidation [ppc:503].",
+      "warnings": [
+        "Query rewriting unavailable; used direct search."
+      ],
       "hit": true,
       "recall": 0.5,
       "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
       "pass": true,
-      "ms": 2
+      "ms": 41016
     },
     {
       "id": "situation-05",
@@ -287,16 +369,20 @@
       "query": "Someone forged my signature on a property document",
       "got": [
         "ppc:470",
+        "ppc:463",
         "ppc:468",
         "ppc:469",
-        "ppc:467",
-        "ppc:466"
+        "ppc:467"
       ],
+      "answer": "The forging of your signature on a property document constitutes forgery under Section 463 of the Pakistan Penal Code and, because it was intended to obtain property, it falls under forgery for the purpose of cheating under Section 468, which is punishable by up to seven years’ imprisonment and a fine. The document is legally a “forged document” as defined in Section 470.",
+      "warnings": [],
       "hit": true,
-      "recall": 0.5,
+      "recall": 0.75,
       "rr": 0.5,
-      "pass": true,
-      "ms": 3
+      "verified": true,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 33906
     },
     {
       "id": "situation-06",
@@ -310,11 +396,18 @@
         "ppc:392",
         "ppc:393"
       ],
+      "answer": "Here are the sections that best match your question. Open a card to read the full text.",
+      "warnings": [
+        "Query rewriting unavailable; used direct search.",
+        "The answer writer is unavailable right now; showing the matching sections."
+      ],
       "hit": true,
       "recall": 0.6666666666666666,
       "rr": 0.3333333333333333,
-      "pass": true,
-      "ms": 3
+      "verified": false,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 34483
     },
     {
       "id": "situation-07",
@@ -328,11 +421,18 @@
         "ppc:457",
         "ppc:460"
       ],
+      "answer": "The man can be charged with **house‑breaking by night** under Section 456 of the Pakistan Penal Code, which carries imprisonment of up to three years and a fine. Section 446 defines the offence as breaking into a house after sunset and before sunrise, so the act you describe falls squarely within that provision. You should report the incident to the police and consult a lawyer for further assistance.",
+      "warnings": [
+        "Query rewriting unavailable; used direct search.",
+        "Quotes not found verbatim in the cited section: ['Whoever commits house-breaking after sunset and before sunrise, is said to commi']"
+      ],
       "hit": true,
       "recall": 0.5,
       "rr": 1.0,
-      "pass": true,
-      "ms": 2
+      "verified": false,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 36577
     },
     {
       "id": "situation-08",
@@ -346,11 +446,18 @@
         "ppc:270",
         "ppc:269"
       ],
+      "answer": "Here are the sections that best match your question. Open a card to read the full text.",
+      "warnings": [
+        "Query rewriting unavailable; used direct search.",
+        "The answer writer is unavailable right now; showing the matching sections."
+      ],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
-      "pass": true,
-      "ms": 2
+      "verified": false,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 37516
     },
     {
       "id": "situation-09",
@@ -358,17 +465,21 @@
       "split": "dev",
       "query": "A man at my office keeps making sexual remarks to female colleagues",
       "got": [
+        "ppc:509",
+        "ppc:377-A",
+        "ppc:292-B",
         "ppc:10",
-        "ppc:371-A",
-        "ppc:496-B",
-        "ppc:294-A",
-        "ppc:295-C"
+        "ppc:371-A"
       ],
-      "hit": false,
-      "recall": 0.0,
-      "rr": 0.0,
+      "answer": "The man’s repeated sexual remarks to female colleagues amount to sexual harassment under Section 509 of the Pakistan Penal Code, which is punishable by up to three years’ imprisonment, a fine of up to five hundred thousand rupees, or both. The offence is cognizable, bailable, compoundable and is tried by a first‑class magistrate, so a complaint can be made to the employer or the police, and you should seek advice from a lawyer or HR department.",
+      "warnings": [],
+      "hit": true,
+      "recall": 1.0,
+      "rr": 1.0,
+      "verified": true,
+      "cites_expected": false,
       "pass": false,
-      "ms": 3
+      "ms": 36766
     },
     {
       "id": "situation-10",
@@ -382,11 +493,18 @@
         "constitution:67",
         "ppc:406"
       ],
+      "answer": "Your partner’s taking and using the money you entrusted to him is a criminal breach of trust under Section 405 of the Pakistan Penal Code, punishable by up to seven years’ imprisonment, a fine, or both under Section 406. You should report the matter to the police and consult a lawyer for civil recovery options.",
+      "warnings": [
+        "Query rewriting unavailable; used direct search.",
+        "Quotes not found verbatim in the cited section: ['Whoever, being in any manner entrusted with property or with any dominion over p']"
+      ],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
-      "pass": true,
-      "ms": 3
+      "verified": false,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 43108
     },
     {
       "id": "roman-01",
@@ -400,11 +518,18 @@
         "ppc:382",
         "ppc:381-A"
       ],
+      "answer": "Phone ki chori theft ke tahat aati hai, iski saza teen saal tak ki qaid, jurmaana, ya dono ho sakti hai, aur yeh bailable nahi hai. Section 379 ke mutabiq, theft par qaid tak ke teen saal, fine ya dono ki saza hoti hai aur case cognizable, non‑bailable aur non‑compoundable hota hai.",
+      "warnings": [
+        "Query rewriting unavailable; used direct search."
+      ],
       "hit": true,
       "recall": 0.3333333333333333,
       "rr": 1.0,
-      "pass": true,
-      "ms": 3
+      "verified": true,
+      "cites_expected": false,
+      "language": true,
+      "pass": false,
+      "ms": 18062
     },
     {
       "id": "roman-02",
@@ -418,11 +543,18 @@
         "ppc:29",
         "ppc:24"
       ],
+      "answer": "Agar cheque bounce ho jata hai to aapko Section 489‑F ke tehat jurm samjha ja sakta hai. Iske liye 3 saal tak ki saza, jurmana, ya dono ho sakte hain, aur ye case non‑bailable, cognizable hai aur Magistrate of First Class ke samne chalaya jata hai.\n\nSection 489‑F ke mutabiq, agar aap sabit na kar saken ke cheque bank ki galti se bounce hua, to aapko imprisonment (max 3 saal) ya fine ya dono ka samna karna padega. Case ko police bina warrant ke arrest kar sakti hai aur court isay compound kar sakta hai, lekin bail milna mushkil hota hai.",
+      "warnings": [
+        "Query rewriting unavailable; used direct search."
+      ],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
-      "pass": true,
-      "ms": 2
+      "verified": true,
+      "cites_expected": false,
+      "language": true,
+      "pass": false,
+      "ms": 24266
     },
     {
       "id": "roman-03",
@@ -430,17 +562,24 @@
       "split": "dev",
       "query": "kisi ne qatl kar diya to saza kya hai",
       "got": [
-        "ppc:324",
         "ppc:302",
+        "ppc:324",
         "ppc:306",
-        "ppc:304",
-        "ppc:313"
+        "ppc:311",
+        "ppc:304"
+      ],
+      "answer": "Aap ke sawal se milti julti yeh dafaat mili hain. Poora text parhne ke liye card kholein.",
+      "warnings": [
+        "The answer writer is unavailable right now; showing the matching sections."
       ],
       "hit": true,
       "recall": 0.5,
-      "rr": 0.5,
-      "pass": true,
-      "ms": 3
+      "rr": 1.0,
+      "verified": false,
+      "cites_expected": false,
+      "language": true,
+      "pass": false,
+      "ms": 42390
     },
     {
       "id": "roman-04",
@@ -450,15 +589,22 @@
       "got": [
         "ppc:171-B",
         "ppc:171-E",
-        "ppc:162",
         "ppc:161",
+        "ppc:162",
         "ppc:163"
+      ],
+      "answer": "Aap ke sawal se milti julti yeh dafaat mili hain. Poora text parhne ke liye card kholein.",
+      "warnings": [
+        "The answer writer is unavailable right now; showing the matching sections."
       ],
       "hit": true,
       "recall": 1.0,
-      "rr": 0.25,
-      "pass": true,
-      "ms": 3
+      "rr": 0.3333333333333333,
+      "verified": false,
+      "cites_expected": false,
+      "language": true,
+      "pass": false,
+      "ms": 44984
     },
     {
       "id": "roman-05",
@@ -466,17 +612,22 @@
       "split": "dev",
       "query": "us ne dhoka de kar mere paise le liye",
       "got": [
-        "ppc:416",
-        "ppc:417",
-        "ppc:419",
-        "ppc:468",
-        "ppc:418"
+        "ppc:415",
+        "ppc:420",
+        "ppc:404",
+        "ppc:403",
+        "ppc:378"
       ],
+      "answer": "Jab koi aapko dhoka de kar paise leta hai to wo Section 415 ke tehat “cheat” aur Section 420 ke tehat “cheating and dishonestly inducing delivery of property” ka jurm hai. Iske liye adalat takreeban 7 saal tak ki saza‑e‑qaid aur jurmana laga sakti hai, aur case bailable hai. \n\nSection 415 ke mutabiq dhokha de kar property dene par majboor karna cheating ke roop mein aata hai, jabke Section 420 is cheating ko aur barha kar property ki delivery ya security ko badalne par bhi saza ka daira 7 saal tak kar deta hai, saath hi fine bhi lagta hai. Yeh jurm cognizable hai aur bailable hai, aur court ki ijaazat se compoundable bhi ho sakta hai.",
+      "warnings": [],
       "hit": true,
-      "recall": 0.3333333333333333,
-      "rr": 0.5,
-      "pass": true,
-      "ms": 3
+      "recall": 0.6666666666666666,
+      "rr": 1.0,
+      "verified": true,
+      "cites_expected": false,
+      "language": true,
+      "pass": false,
+      "ms": 53968
     },
     {
       "id": "roman-06",
@@ -484,17 +635,22 @@
       "split": "dev",
       "query": "jaan se maarne ki dhamki di hai",
       "got": [
+        "ppc:506",
         "ppc:507",
         "ppc:503",
-        "ppc:506",
-        "ppc:504",
-        "ppc:510"
+        "ppc:300",
+        "ppc:321"
       ],
+      "answer": "Jaan se maarne ki dhamki dena criminal intimidation ke tahat aata hai aur agar threat maut ka ho to saza tak 7 saal ki qaid, jurmaana ya dono ho sakti hain. Yeh offence bailable hai lekin arrest ke liye warrant zaroori hai [ppc:506].",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
-      "rr": 0.5,
+      "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
+      "language": true,
       "pass": true,
-      "ms": 2
+      "ms": 35077
     },
     {
       "id": "urdu-01",
@@ -508,11 +664,18 @@
         "ppc:382",
         "ppc:381-A"
       ],
+      "answer": "چوری کی سزا زیادہ سے زیادہ تین سال کی قید، جرمانہ یا دونوں ہو سکتے ہیں۔ یہ جرم غیر ضمانتی، قابل گرفتاری اور غیر معاہدہ (non‑compoundable) ہے۔[ppc:379]",
+      "warnings": [
+        "Query rewriting unavailable; used direct search."
+      ],
       "hit": true,
       "recall": 0.5,
       "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
+      "language": true,
       "pass": true,
-      "ms": 3
+      "ms": 20516
     },
     {
       "id": "urdu-02",
@@ -523,14 +686,19 @@
         "ppc:171-E",
         "ppc:171-B",
         "ppc:162",
-        "ppc:161",
-        "ppc:163"
+        "ppc:163",
+        "ppc:161"
       ],
+      "answer": "رشوت لینے کی سزا عام طور پر قید، جرمانہ یا دونوں پر مشتمل ہوتی ہے اور اس کی حد برائبی کی نوعیت کے مطابق ایک سال سے تین سال تک ہو سکتی ہے۔ سیکشن 171‑E کے تحت برائبی کی زیادہ سے زیادہ سزا ایک سال کی قید یا جرمانہ یا دونوں ہے؛ اگر برائبی ‘تھیٹنگ’ ہو تو صرف جرمانہ۔ عوامی عہدے کے ذریعے رشوت لینے پر سیکشن 162 کے تحت تین سال تک کی قید یا جرمانہ یا دونوں؛ ذاتی اثر کے ذریعے رشوت پر سیکشن 163 کے تحت ایک سال تک کی سادہ قید یا جرمانہ یا دونوں؛ اور سرکاری ملازم خود رشوت لینے پر سیکشن 161 کے تحت تین سال تک کی قید یا جرمانہ یا دونوں۔",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
-      "rr": 0.25,
-      "pass": true,
-      "ms": 3
+      "rr": 0.2,
+      "verified": true,
+      "cites_expected": false,
+      "language": true,
+      "pass": false,
+      "ms": 42500
     },
     {
       "id": "urdu-03",
@@ -538,17 +706,22 @@
       "split": "dev",
       "query": "قتل کی سزا کیا ہے",
       "got": [
-        "ppc:324",
         "ppc:302",
+        "ppc:324",
         "ppc:306",
-        "ppc:304",
-        "ppc:313"
+        "ppc:311",
+        "ppc:304"
       ],
+      "answer": "قتل‑امڈ کی بنیادی سزا قصاص کے تحت موت ہے؛ اگر ثبوت نہ ملے تو طعظیر کے تحت عمر قید یا زیادہ سے زیادہ پچیس سال کی قید ہو سکتی ہے۔ یہ ہی قانون میں مقرر ہے [ppc:302].",
+      "warnings": [],
       "hit": true,
       "recall": 0.5,
-      "rr": 0.5,
+      "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
+      "language": true,
       "pass": true,
-      "ms": 3
+      "ms": 41875
     },
     {
       "id": "urdu-04",
@@ -556,17 +729,22 @@
       "split": "dev",
       "query": "بچے کو اغوا کرنے کی سزا",
       "got": [
+        "ppc:369",
         "ppc:365-A",
         "ppc:363",
-        "ppc:362",
-        "ppc:359",
-        "ppc:368"
+        "ppc:361",
+        "ppc:292-C"
       ],
+      "answer": "بچے کو اغوا کرنے کی سزا عام طور پر زیادہ سے زیادہ سات سال کی قید اور جرمانہ ہے۔ اگر بچہ دس سال سے کم عمر ہو اور اغوا کا مقصد اس کی املاک چرانا ہو تو یہ سزا غیر قابل ضمانت (non‑bailable) ہو سکتی ہے، جبکہ عام اغوا پر قید بائلبل (bailable) ہو سکتی ہے۔",
+      "warnings": [],
       "hit": true,
       "recall": 0.42857142857142855,
-      "rr": 1.0,
-      "pass": true,
-      "ms": 3
+      "rr": 0.5,
+      "verified": true,
+      "cites_expected": false,
+      "language": true,
+      "pass": false,
+      "ms": 18671
     },
     {
       "id": "rights-01",
@@ -575,16 +753,20 @@
       "query": "Do I have the right to a lawyer if the police arrest me?",
       "got": [
         "constitution:10",
+        "constitution:36",
         "constitution:203E",
-        "ppc:76",
-        "constitution:8",
-        "ppc:376-A"
+        "constitution:27",
+        "constitution:21"
       ],
+      "answer": "Yes. Under Article 10(1) of the Constitution you cannot be denied the right to consult and be defended by a legal practitioner of your choice when arrested [constitution:10]. The same provision also requires that you be informed of the grounds for arrest and produced before a magistrate within twenty‑four hours [constitution:10].",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
       "pass": true,
-      "ms": 3
+      "ms": 34016
     },
     {
       "id": "rights-02",
@@ -594,15 +776,19 @@
       "got": [
         "constitution:25A",
         "constitution:37",
-        "constitution:213",
-        "ppc:106",
-        "constitution:25"
+        "constitution:25",
+        "constitution:26",
+        "constitution:15"
       ],
+      "answer": "Yes. The Constitution mandates that the State provide free and compulsory education to all children aged five to sixteen, and also free secondary education.[constitution:25A][constitution:37]",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
       "pass": true,
-      "ms": 2
+      "ms": 13343
     },
     {
       "id": "rights-03",
@@ -610,17 +796,23 @@
       "split": "dev",
       "query": "Can I demand information from a government department?",
       "got": [
+        "constitution:19A",
         "ppc:348",
         "ppc:337-K",
         "constitution:122",
-        "constitution:82",
-        "constitution:19A"
+        "constitution:82"
+      ],
+      "answer": "**Yes.** Under Article 19A of the Constitution you have a constitutional right to obtain information of public importance from a government department, although the right is subject to any regulation and reasonable restrictions the law may impose. In practice you may request the information, but the department can lawfully refuse if the request falls within those permissible limits.\n\n[constitution:19A]",
+      "warnings": [
+        "Query rewriting unavailable; used direct search."
       ],
       "hit": true,
       "recall": 1.0,
-      "rr": 0.2,
+      "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
       "pass": true,
-      "ms": 2
+      "ms": 13218
     },
     {
       "id": "rights-04",
@@ -629,16 +821,20 @@
       "query": "Do I have freedom of religion?",
       "got": [
         "constitution:20",
-        "constitution:2",
+        "constitution:26",
         "constitution:16",
         "constitution:19",
         "constitution:15"
       ],
+      "answer": "Yes, you have freedom of religion under Pakistan’s Constitution. Article 20 guarantees every citizen the right to profess, practise and propagate his religion, and it also allows every religious denomination and sect to establish, maintain and manage its own religious institutions, subject only to law, public order and morality [constitution:20].",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
       "pass": true,
-      "ms": 2
+      "ms": 23983
     },
     {
       "id": "rights-05",
@@ -647,16 +843,20 @@
       "query": "Are all citizens equal before the law?",
       "got": [
         "constitution:25",
-        "constitution:259",
-        "ppc:337-V",
-        "ppc:337-X",
-        "constitution:203J"
+        "constitution:26",
+        "constitution:19A",
+        "constitution:16",
+        "constitution:23"
       ],
+      "answer": "Yes. Article 25 of the Constitution states that all citizens are equal before the law and entitled to equal protection, establishing legal equality for everyone. This principle is reinforced by non‑discrimination provisions in Articles 26 and the broader constitutional framework.",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
-      "pass": true,
-      "ms": 1
+      "verified": true,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 10641
     },
     {
       "id": "rights-06",
@@ -670,11 +870,18 @@
         "ppc:76",
         "ppc:222"
       ],
+      "answer": "No, the police cannot keep you in custody without producing you before a magistrate within 24 hours, except under a preventive‑detention law [constitution:10].\n\nArticle 10 requires that anyone arrested be brought before a magistrate within a day and cannot be held longer without magistrate authority, so routine detention beyond that period is not permitted.",
+      "warnings": [
+        "Query rewriting unavailable; used direct search."
+      ],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
-      "pass": true,
-      "ms": 3
+      "verified": true,
+      "cites_expected": true,
+      "facts": false,
+      "pass": false,
+      "ms": 33827
     },
     {
       "id": "rights-07",
@@ -683,16 +890,20 @@
       "query": "Is peaceful protest allowed?",
       "got": [
         "constitution:16",
-        "ppc:128",
-        "constitution:40",
-        "ppc:130",
-        "ppc:462-M"
+        "constitution:19",
+        "constitution:17",
+        "constitution:15",
+        "constitution:114"
       ],
+      "answer": "**Yes.** The Constitution guarantees every citizen the right to assemble peacefully, which includes peaceful protest, but the state may impose reasonable restrictions in the interest of public order. This means protests are allowed as long as they are non‑violent and comply with any lawful limits.\n\nArticle 16 explicitly provides for peaceful assembly, while allowing the government to set reasonable restrictions to protect public order.",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
-      "pass": true,
-      "ms": 1
+      "verified": true,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 16437
     },
     {
       "id": "rights-08",
@@ -701,16 +912,20 @@
       "query": "Is the privacy of my home protected?",
       "got": [
         "constitution:14",
-        "ppc:509",
-        "ppc:418",
         "constitution:35",
-        "ppc:374"
+        "constitution:36",
+        "constitution:25",
+        "constitution:13"
       ],
+      "answer": "Yes, the privacy of your home is constitutionally protected. Article 14 explicitly declares that the privacy of home shall be inviolable, subject to law, thereby safeguarding it against unlawful intrusion.",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
-      "pass": true,
-      "ms": 1
+      "verified": true,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 9141
     },
     {
       "id": "sched-01",
@@ -719,7 +934,7 @@
       "query": "ppc:379",
       "pass": true,
       "detail": "",
-      "ms": 0
+      "ms": 14
     },
     {
       "id": "sched-02",
@@ -767,6 +982,50 @@
       "ms": 0
     },
     {
+      "id": "oos-01",
+      "type": "out_of_scope",
+      "split": "dev",
+      "query": "best biryani recipe in Lahore",
+      "got": [],
+      "answer": "I can only help with questions about Pakistan's Constitution and the Pakistan Penal Code.",
+      "warnings": [],
+      "refused": true,
+      "pass": true,
+      "ms": 2343
+    },
+    {
+      "id": "oos-02",
+      "type": "out_of_scope",
+      "split": "dev",
+      "query": "who won the cricket match yesterday",
+      "got": [],
+      "answer": "I can only help with questions about Pakistan's Constitution and the Pakistan Penal Code.",
+      "warnings": [],
+      "refused": true,
+      "pass": true,
+      "ms": 2437
+    },
+    {
+      "id": "oos-03",
+      "type": "out_of_scope",
+      "split": "dev",
+      "query": "write me a python script to sort a list",
+      "got": [
+        "constitution:28",
+        "constitution:70",
+        "constitution:203D",
+        "constitution:142",
+        "constitution:144"
+      ],
+      "answer": "The legal sections you provided do not contain any rule or guidance on writing a Python script to sort a list. For programming assistance, you should consult a software developer or refer to programming tutorials and documentation.",
+      "warnings": [
+        "Query rewriting unavailable; used direct search."
+      ],
+      "refused": false,
+      "pass": false,
+      "ms": 15984
+    },
+    {
       "id": "heldout-01",
       "type": "situation",
       "split": "heldout",
@@ -778,11 +1037,18 @@
         "constitution:41",
         "ppc:319"
       ],
+      "answer": "Here are the sections that best match your question. Open a card to read the full text.",
+      "warnings": [
+        "Query rewriting unavailable; used direct search.",
+        "The answer writer is unavailable right now; showing the matching sections."
+      ],
       "hit": true,
       "recall": 1.0,
       "rr": 0.5,
-      "pass": true,
-      "ms": 2
+      "verified": false,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 32358
     },
     {
       "id": "heldout-02",
@@ -792,15 +1058,21 @@
       "got": [
         "ppc:336-A",
         "ppc:336-B",
-        "ppc:377",
-        "ppc:10",
-        "ppc:337-B"
+        "ppc:397",
+        "ppc:89",
+        "ppc:112"
+      ],
+      "answer": "Here are the sections that best match your question. Open a card to read the full text.",
+      "warnings": [
+        "The answer writer is unavailable right now; showing the matching sections."
       ],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
-      "pass": true,
-      "ms": 1
+      "verified": false,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 35812
     },
     {
       "id": "heldout-03",
@@ -814,11 +1086,17 @@
         "ppc:179",
         "ppc:178"
       ],
+      "answer": "Section 330 of the Pakistan Penal Code requires that the inheritance (diyat) be distributed among heirs according to their legal shares, and an heir cannot withhold another heir’s portion [ppc:330]. Since the provided sections do not prescribe a criminal penalty for refusing to give a sibling her share, the matter is typically addressed through civil inheritance proceedings, and you should consult a lawyer to enforce her right to the share.",
+      "warnings": [
+        "Query rewriting unavailable; used direct search."
+      ],
       "hit": false,
       "recall": 0.0,
       "rr": 0.0,
+      "verified": true,
+      "cites_expected": false,
       "pass": false,
-      "ms": 1
+      "ms": 20547
     },
     {
       "id": "heldout-04",
@@ -832,11 +1110,17 @@
         "ppc:365-B",
         "constitution:245"
       ],
+      "answer": "Forced marriage of a girl is a criminal offence under Section 365‑B of the Pakistan Penal Code, punishable by life imprisonment and a fine, and it is also prohibited by the Constitution’s ban on forced labour. The law criminalises kidnapping or abducting a woman with the intent to compel her to marry against her will, prescribing life imprisonment, while Article 11 declares all forms of forced labour prohibited.",
+      "warnings": [
+        "Query rewriting unavailable; used direct search."
+      ],
       "hit": false,
       "recall": 0.0,
       "rr": 0.0,
+      "verified": true,
+      "cites_expected": false,
       "pass": false,
-      "ms": 1
+      "ms": 33875
     },
     {
       "id": "heldout-05",
@@ -844,17 +1128,21 @@
       "split": "heldout",
       "query": "He bought a phone knowing it was stolen",
       "got": [
-        "ppc:410",
-        "ppc:411",
-        "ppc:414",
         "ppc:412",
-        "ppc:381-A"
+        "ppc:411",
+        "ppc:410",
+        "ppc:413",
+        "ppc:378"
       ],
+      "answer": "Buying a phone while knowing it was stolen makes him liable under Section 411 for dishonest receipt of stolen property, punishable by up to three years’ imprisonment, a fine, or both. The offence is cognizable, non‑bailable and tried by a magistrate of the first or second class.",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
-      "rr": 1.0,
-      "pass": true,
-      "ms": 1
+      "rr": 0.5,
+      "verified": true,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 17561
     },
     {
       "id": "heldout-06",
@@ -862,17 +1150,23 @@
       "split": "heldout",
       "query": "A witness lied under oath in court",
       "got": [
-        "constitution:203J",
-        "constitution:194",
-        "constitution:178",
-        "constitution:175D",
-        "ppc:51"
+        "ppc:193",
+        "ppc:191",
+        "ppc:199",
+        "ppc:192",
+        "ppc:196"
       ],
-      "hit": false,
-      "recall": 0.0,
-      "rr": 0.0,
+      "answer": "Here are the sections that best match your question. Open a card to read the full text.",
+      "warnings": [
+        "The answer writer is unavailable right now; showing the matching sections."
+      ],
+      "hit": true,
+      "recall": 1.0,
+      "rr": 1.0,
+      "verified": false,
+      "cites_expected": false,
       "pass": false,
-      "ms": 1
+      "ms": 39953
     },
     {
       "id": "heldout-07",
@@ -880,17 +1174,21 @@
       "split": "heldout",
       "query": "Kidnappers are demanding ransom for my son",
       "got": [
-        "ppc:307",
-        "constitution:122",
-        "constitution:82",
-        "ppc:422",
-        "ppc:424"
+        "ppc:365-A",
+        "ppc:368",
+        "ppc:359",
+        "ppc:364",
+        "ppc:307"
       ],
-      "hit": false,
-      "recall": 0.0,
-      "rr": 0.0,
-      "pass": false,
-      "ms": 1
+      "answer": "Kidnapping or abducting a person for ransom is punishable under Section 365‑A with death or imprisonment for life and forfeiture of property. It is a cognizable, non‑bailable, non‑compoundable offence tried by a Court of Session [ppc:365-A].",
+      "warnings": [],
+      "hit": true,
+      "recall": 1.0,
+      "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
+      "pass": true,
+      "ms": 33968
     },
     {
       "id": "heldout-08",
@@ -904,11 +1202,19 @@
         "ppc:103",
         "ppc:285"
       ],
+      "answer": "Aap ke sawal se milti julti yeh dafaat mili hain. Poora text parhne ke liye card kholein.",
+      "warnings": [
+        "Query rewriting unavailable; used direct search.",
+        "The answer writer is unavailable right now; showing the matching sections."
+      ],
       "hit": true,
       "recall": 0.6666666666666666,
       "rr": 0.5,
-      "pass": true,
-      "ms": 1
+      "verified": false,
+      "cites_expected": false,
+      "language": true,
+      "pass": false,
+      "ms": 39266
     },
     {
       "id": "heldout-09",
@@ -922,11 +1228,17 @@
         "ppc:368",
         "ppc:108"
       ],
+      "answer": "No, you cannot be punished twice for the same injury; the punishment merges into a single penalty, though distinct injuries may attract separate punishments. Under Section 337‑W, multiple hurts are punished separately only if they are distinct, and when wounds join or the hurt leads to death before healing, the original punishment merges into one penalty.",
+      "warnings": [
+        "Query rewriting unavailable; used direct search."
+      ],
       "hit": false,
       "recall": 0.0,
       "rr": 0.0,
+      "verified": true,
+      "cites_expected": false,
       "pass": false,
-      "ms": 1
+      "ms": 37968
     },
     {
       "id": "heldout-10",
@@ -940,11 +1252,17 @@
         "constitution:39",
         "constitution:245"
       ],
+      "answer": "**No, forced labour is not allowed in Pakistan.** The Constitution expressly prohibits all forms of forced labour, and the Pakistan Penal Code criminalises anyone who unlawfully compels a person to work against their will, prescribing up to one year imprisonment, a fine, or both.[constitution:11][ppc:374]",
+      "warnings": [
+        "Query rewriting unavailable; used direct search."
+      ],
       "hit": true,
       "recall": 1.0,
       "rr": 1.0,
+      "verified": true,
+      "cites_expected": true,
       "pass": true,
-      "ms": 1
+      "ms": 13937
     },
     {
       "id": "heldout-11",
@@ -952,17 +1270,21 @@
       "split": "heldout",
       "query": "Can I move and live anywhere in the country?",
       "got": [
-        "ppc:366-B",
-        "ppc:3",
-        "ppc:349",
-        "ppc:93",
-        "constitution:15"
+        "constitution:15",
+        "constitution:16",
+        "constitution:19",
+        "constitution:20",
+        "constitution:18"
       ],
+      "answer": "Yes, you have the constitutional right to move to and reside in any part of Pakistan, although the state may impose reasonable restrictions in the public interest. Article 15 guarantees this freedom of movement and settlement, subject only to lawful, reasonable limits.",
+      "warnings": [],
       "hit": true,
       "recall": 1.0,
-      "rr": 0.2,
-      "pass": true,
-      "ms": 1
+      "rr": 1.0,
+      "verified": true,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 13358
     },
     {
       "id": "heldout-12",
@@ -970,17 +1292,23 @@
       "split": "heldout",
       "query": "Who can become a member of parliament?",
       "got": [
-        "constitution:64",
-        "constitution:43",
-        "constitution:103",
+        "constitution:62",
+        "constitution:113",
         "constitution:63",
-        "constitution:75"
+        "constitution:273",
+        "constitution:43"
+      ],
+      "answer": "Here are the sections that best match your question. Open a card to read the full text.",
+      "warnings": [
+        "The answer writer is unavailable right now; showing the matching sections."
       ],
       "hit": true,
-      "recall": 0.5,
-      "rr": 0.25,
-      "pass": true,
-      "ms": 1
+      "recall": 1.0,
+      "rr": 1.0,
+      "verified": false,
+      "cites_expected": false,
+      "pass": false,
+      "ms": 34156
     }
   ]
 }

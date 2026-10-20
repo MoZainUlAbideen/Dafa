@@ -46,10 +46,14 @@ class GroqClient:
                 time.sleep(wait)
             self._last = time.monotonic()
 
-    def chat_json(self, system: str, user: str, usage: Usage | None = None, temperature: float = 0.1, max_tokens: int = 1200) -> dict:
-        """Call the model and parse a JSON object from its reply."""
-        if not self.api_key:
-            raise LLMError("GROQ_API_KEY is not set")
+    @property
+    def is_reasoning_model(self) -> bool:
+        """gpt-oss / qwen3 "think" before answering, and those hidden reasoning
+        tokens count against max_tokens."""
+        m = self.model.lower()
+        return "gpt-oss" in m or "qwen3" in m
+
+    def build_payload(self, system: str, user: str, temperature: float, max_tokens: int) -> dict:
         payload = {
             "model": self.model,
             "temperature": temperature,
@@ -57,7 +61,21 @@ class GroqClient:
             "response_format": {"type": "json_object"},
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
         }
+        if self.is_reasoning_model:
+            # Bug found in full evals with openai/gpt-oss-120b: budgets sized for a
+            # non-reasoning model (300 / 1200) ran out during reasoning, so Groq
+            # returned json_validate_failed "max completion tokens reached".
+            payload["reasoning_effort"] = settings.reasoning_effort
+            payload["max_tokens"] = max(max_tokens * 3, 2000)
+        return payload
+
+    def chat_json(self, system: str, user: str, usage: Usage | None = None, temperature: float = 0.1, max_tokens: int = 1200) -> dict:
+        """Call the model and parse a JSON object from its reply."""
+        if not self.api_key:
+            raise LLMError("GROQ_API_KEY is not set")
+        payload = self.build_payload(system, user, temperature, max_tokens)
         last_err = ""
+        json_retry_done = False
         for attempt in range(4):
             self._throttle()
             t0 = time.monotonic()
@@ -72,6 +90,12 @@ class GroqClient:
                 last_err = f"HTTP {r.status_code}"
                 time.sleep(min(retry_after, 10))
                 continue
+            if r.status_code == 400 and "json_validate_failed" in r.text and not json_retry_done:
+                # The model ran out of room or produced invalid JSON: retry once with double budget.
+                json_retry_done = True
+                payload = {**payload, "max_tokens": payload["max_tokens"] * 2}
+                last_err = "json_validate_failed"
+                continue
             if r.status_code != 200:
                 raise LLMError(f"Groq HTTP {r.status_code}: {r.text[:300]}")
             data = r.json()
@@ -81,9 +105,23 @@ class GroqClient:
                 usage.prompt_tokens += u.get("prompt_tokens", 0)
                 usage.completion_tokens += u.get("completion_tokens", 0)
                 usage.latencies_ms.append(int((time.monotonic() - t0) * 1000))
-            content = data["choices"][0]["message"]["content"]
+            content = data["choices"][0]["message"].get("content") or ""
             return parse_json(content)
         raise LLMError(f"Groq failed after retries: {last_err}")
+
+
+def preflight(client: "GroqClient") -> None:
+    """One tiny call before a batch run, so a wrong model name or key fails
+    fast with a clear message instead of failing every eval case (found when
+    Groq retired the default model and all 56 cases were marked FAIL)."""
+    client.chat_json("Reply with JSON.", 'Return {"ok": true}', max_tokens=20)
+
+
+def list_models(api_key: str | None = None) -> list[str]:
+    key = api_key if api_key is not None else settings.groq_api_key
+    r = httpx.get(f"{settings.groq_base_url}/models", headers={"Authorization": f"Bearer {key}"}, timeout=20)
+    r.raise_for_status()
+    return sorted(m["id"] for m in r.json().get("data", []))
 
 
 def parse_json(content: str) -> dict:
@@ -96,3 +134,7 @@ def parse_json(content: str) -> dict:
         if start != -1 and end > start:
             return json.loads(content[start : end + 1])
         raise LLMError(f"Model did not return JSON: {content[:200]}")
+
+
+if __name__ == "__main__":  # uv run python -m dafa.llm.groq_client  -> lists the models your key can use
+    print("\n".join(list_models()))

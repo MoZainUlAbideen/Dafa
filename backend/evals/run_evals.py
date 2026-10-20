@@ -28,7 +28,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from dafa.config import settings
-from dafa.llm.groq_client import GroqClient
+from dafa.llm.groq_client import GroqClient, LLMError, preflight
 from dafa.llm.prompts import PROMPT_VERSION
 from dafa.pipeline.answer import Pipeline, detect_language
 from dafa.retrieval.store import _canon, get_store
@@ -98,6 +98,13 @@ def run(mode: str, only: str | None) -> dict:
     llm = GroqClient(min_interval_s=2.5) if mode == "full" else None
     if mode == "full" and not settings.llm_enabled:
         sys.exit("Full mode needs GROQ_API_KEY in backend/.env")
+    if mode == "full":
+        try:
+            preflight(llm)
+        except LLMError as e:
+            sys.exit(f"Groq preflight failed for model '{settings.groq_model}': {e}\n"
+                     "List the models your key can use with:  uv run python -m dafa.llm.groq_client\n"
+                     "then set GROQ_MODEL in backend/.env")
     pipe = Pipeline(store, llm=llm, top_k=K)
     rows = []
     for case in load_cases(only):
@@ -128,6 +135,9 @@ def run(mode: str, only: str | None) -> dict:
         rows.append(row)
         mark = "PASS" if row["pass"] else "FAIL"
         print(f"{mark}  {row['id']:<28} {row.get('got', row.get('detail', ''))}")
+        if not row["pass"]:  # say exactly which checks failed, so failures can be diagnosed
+            failed = [k for k in ("hit", "verified", "cites_expected", "facts", "language", "refused") if row.get(k) is False]
+            print(f"        failed checks: {failed or '-'}" + (f" | warnings: {row['warnings']}" if row.get("warnings") else ""))
     return summarise(rows, mode)
 
 
