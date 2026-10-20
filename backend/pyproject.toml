@@ -1,0 +1,30 @@
+[project]
+name = "dafa"
+version = "0.1.0"
+description = "Dafa: grounded Q&A over Pakistan's Constitution and Penal Code, with section-level citations"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "httpx>=0.27",
+    "pydantic>=2.7",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+ingest = ["pymupdf>=1.24"]
+
+[dependency-groups]
+dev = ["pytest>=8", "pymupdf>=1.24"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["dafa"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "tests"]
