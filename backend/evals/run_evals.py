@@ -93,9 +93,15 @@ def grade_answer(case: dict, res) -> dict:
     return g
 
 
-def run(mode: str, only: str | None) -> dict:
+PARTIAL = RESULTS / "partial_full.jsonl"
+
+
+def run(mode: str, only: str | None, resume: bool = False) -> dict:
     store = get_store()
-    llm = GroqClient(min_interval_s=2.5) if mode == "full" else None
+    def show_wait(seconds: float, reason: str) -> None:
+        print(f"        waiting {seconds:.0f}s for {reason}...", flush=True)
+
+    llm = GroqClient(min_interval_s=4.0, on_wait=show_wait) if mode == "full" else None
     if mode == "full" and not settings.llm_enabled:
         sys.exit("Full mode needs GROQ_API_KEY in backend/.env")
     if mode == "full":
@@ -107,7 +113,23 @@ def run(mode: str, only: str | None) -> dict:
                      "then set GROQ_MODEL in backend/.env")
     pipe = Pipeline(store, llm=llm, top_k=K)
     rows = []
-    for case in load_cases(only):
+    done: set[str] = set()
+    if mode == "full":
+        # Full runs are saved case by case so the free tier's daily token limit
+        # (200K) never throws away finished work: `--resume` continues tomorrow.
+        RESULTS.mkdir(exist_ok=True)
+        if resume and PARTIAL.exists():
+            rows = [json.loads(x) for x in PARTIAL.read_text(encoding="utf-8").splitlines() if x.strip()]
+            done = {r["id"] for r in rows}
+            print(f"resuming: {len(done)} cases already done")
+        elif PARTIAL.exists():
+            PARTIAL.unlink()
+    cases = load_cases(only)
+    for n, case in enumerate(cases, 1):
+        if case["id"] in done:
+            continue
+        if mode == "full":
+            print(f"[{n}/{len(cases)}] {case['id']} ...", flush=True)
         t0 = time.monotonic()
         row: dict = {"id": case["id"], "type": case["type"], "split": case.get("split", "dev"), "query": case.get("query", case.get("section"))}
         if case["type"] == "schedule":
@@ -123,6 +145,11 @@ def run(mode: str, only: str | None) -> dict:
             row["pass"] = row.get("hit", False)
         else:
             res = pipe.answer(case["query"])
+            if "daily limit" in res.llm_error:
+                print(f"\nStopped: {res.llm_error[:160]}\n"
+                      f"{len(rows)} cases are saved. Run again later (the daily quota refills over 24h) with:\n"
+                      "  uv run python -m evals.run_evals --mode full --resume")
+                sys.exit(2)
             keys = [s.key for s in res.sections]
             row["got"] = keys[:K]
             row["answer"] = res.answer
@@ -134,6 +161,9 @@ def run(mode: str, only: str | None) -> dict:
             row["pass"] = all(checks) if checks else False
         row["ms"] = int((time.monotonic() - t0) * 1000)
         rows.append(row)
+        if mode == "full":
+            with open(PARTIAL, "a", encoding="utf-8") as f:
+                f.write(json.dumps(row, ensure_ascii=False) + "\n")
         mark = "PASS" if row["pass"] else "FAIL"
         print(f"{mark}  {row['id']:<28} {row.get('got', row.get('detail', ''))}")
         if not row["pass"]:  # say exactly which checks failed, so failures can be diagnosed
@@ -204,8 +234,11 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", choices=["retrieval", "full"], default="retrieval")
     ap.add_argument("--only")
+    ap.add_argument("--resume", action="store_true", help="full mode: continue a run stopped by the daily limit")
     args = ap.parse_args()
-    result = run(args.mode, args.only)
+    result = run(args.mode, args.only, args.resume)
+    if args.mode == "full" and PARTIAL.exists():
+        PARTIAL.unlink()  # finished: the report replaces the partial file
     write_report(result)
     s = result["summary"]
     print(f"\npass rate {s['pass_rate']:.0%} | hit@{K} {s[f'hit@{K}']} | recall@{K} {s[f'recall@{K}']} | MRR {s['mrr']} | verified {s['verified_rate']}")

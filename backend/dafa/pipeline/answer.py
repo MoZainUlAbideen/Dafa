@@ -21,13 +21,14 @@ from dafa.config import settings
 from dafa.llm import prompts
 from dafa.llm.groq_client import GroqClient, LLMError, Usage
 from dafa.models import Section
-from dafa.pipeline.verify import canonical_citations, strip_bad_markers, verify
+from dafa.pipeline.verify import attach_citations, canonical_citations, strip_bad_markers, verify
 from dafa.retrieval.router import route
 from dafa.retrieval.store import LawStore
 
 log = logging.getLogger("dafa.pipeline")
 
-MAX_SECTION_CHARS = 1800
+MAX_SECTION_CHARS = 1200  # was 1800; smaller prompts fit Groq's free-tier 8K tokens/minute
+DRAFT_K = 4  # sections sent to the answer writer (all retrieved ones are still shown to the user)
 URDU_SCRIPT_RE = re.compile(r"[؀-ۿ]")
 ROMAN_URDU_HINTS = re.compile(
     r"\b(kya|kia|hai|hain|mein|kaun|kaunsi|konsi|ki|ka|ke|ko|agar|lagti|lagta|saza|kitni|kab|kaise|mera|meri|mujhe|ho|gaya|gayi|liya|kar)\b",
@@ -48,6 +49,7 @@ class AnswerResult:
     timings_ms: dict[str, int] = field(default_factory=dict)
     usage: dict = field(default_factory=dict)
     raw_draft: str = ""  # the model's first draft before any fixing (for evals / debugging)
+    llm_error: str = ""  # set when the LLM failed (e.g. daily rate limit), so callers can react
 
 
 def detect_language(query: str) -> str:
@@ -113,6 +115,7 @@ class Pipeline:
 
         llm_ok = self.llm is not None and bool(self.llm.api_key)
         warnings: list[str] = []
+        rewrite_error = ""
 
         if llm_ok and not route(query).refs:
             try:
@@ -127,6 +130,7 @@ class Pipeline:
             except LLMError as e:
                 log.warning("rewrite failed: %s", e)
                 warnings.append("Query rewriting unavailable; used direct search.")
+                rewrite_error = str(e)
         timings["rewrite"] = int((time.monotonic() - t0) * 1000)
 
         t1 = time.monotonic()
@@ -137,24 +141,25 @@ class Pipeline:
             timings["total"] = int((time.monotonic() - t0) * 1000)
             return AnswerResult(query, "search_only", NO_MATCH[language], language, [], warnings=warnings, timings_ms=timings, usage=_usage(usage))
 
-        if not llm_ok:
+        if not llm_ok or "daily limit" in rewrite_error:  # no point calling the writer if the quota is gone
             timings["total"] = int((time.monotonic() - t0) * 1000)
-            return AnswerResult(query, "search_only", SEARCH_ONLY[language], language, sections, warnings=warnings, timings_ms=timings)
+            return AnswerResult(query, "search_only", SEARCH_ONLY[language], language, sections, warnings=warnings,
+                                timings_ms=timings, llm_error=rewrite_error)
 
         t2 = time.monotonic()
-        context_text, ctx = format_context(sections)
+        context_text, ctx = format_context(sections[:DRAFT_K])
         system = prompts.ANSWER_SYSTEM.replace("{language_rule}", prompts.LANGUAGE_RULES[language])
         user = f"QUESTION: {query}\n\nCONTEXT:\n{context_text}"
         try:
             draft = self.llm.chat_json(system, user, usage=usage)
             raw_draft = str(draft.get("answer", ""))
-            answer_text = canonical_citations(raw_draft.strip())
+            answer_text = attach_citations(canonical_citations(raw_draft.strip()), draft.get("citations"))
             quotes = [q for q in draft.get("quotes", []) if isinstance(q, dict)]
             verdict = verify(answer_text, quotes, ctx)
             if not verdict.ok:  # one repair round with the exact problems listed
                 repair = prompts.REPAIR_NOTE.format(problems="\n".join(verdict.problems))
                 draft = self.llm.chat_json(system, f"{user}\n\nPREVIOUS ANSWER:\n{answer_text}\n\n{repair}", usage=usage)
-                answer_text = canonical_citations(str(draft.get("answer", "")).strip())
+                answer_text = attach_citations(canonical_citations(str(draft.get("answer", "")).strip()), draft.get("citations"))
                 quotes = [q for q in draft.get("quotes", []) if isinstance(q, dict)]
                 verdict = verify(answer_text, quotes, ctx)
             if not verdict.ok:
@@ -165,7 +170,8 @@ class Pipeline:
             log.warning("draft failed: %s", e)
             timings["total"] = int((time.monotonic() - t0) * 1000)
             warnings.append("The answer writer is unavailable right now; showing the matching sections.")
-            return AnswerResult(query, "search_only", SEARCH_ONLY[language], language, sections, warnings=warnings, timings_ms=timings, usage=_usage(usage))
+            return AnswerResult(query, "search_only", SEARCH_ONLY[language], language, sections, warnings=warnings,
+                                timings_ms=timings, usage=_usage(usage), llm_error=str(e))
         timings["draft_verify"] = int((time.monotonic() - t2) * 1000)
         timings["total"] = int((time.monotonic() - t0) * 1000)
 

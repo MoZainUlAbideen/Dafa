@@ -9,6 +9,8 @@ It also records token usage so the API can log cost per request (LLMOps).
 from __future__ import annotations
 
 import json
+import re
+import sys
 import threading
 import time
 from dataclasses import dataclass, field
@@ -22,6 +24,20 @@ class LLMError(RuntimeError):
     pass
 
 
+class RateLimitExhausted(LLMError):
+    """The daily quota (tokens or requests per day) is used up: retrying now is pointless."""
+
+
+def parse_duration(v: str | None) -> float:
+    """Groq reset headers look like "7.66s", "1m2.5s", "450ms"."""
+    if not v:
+        return 0.0
+    total = 0.0
+    for num, unit in re.findall(r"([\d.]+)(ms|h|m|s)", v):
+        total += float(num) * {"ms": 0.001, "s": 1, "m": 60, "h": 3600}[unit]
+    return total
+
+
 @dataclass
 class Usage:
     calls: int = 0
@@ -31,20 +47,37 @@ class Usage:
 
 
 class GroqClient:
-    def __init__(self, api_key: str | None = None, model: str | None = None, min_interval_s: float = 0.5):
+    def __init__(self, api_key: str | None = None, model: str | None = None, min_interval_s: float = 0.5, on_wait=None):
         self.api_key = api_key if api_key is not None else settings.groq_api_key
         self.model = model or settings.groq_model
         self.min_interval_s = min_interval_s
         self._last = 0.0
+        self._resume_at = 0.0  # set from x-ratelimit headers when the minute's token budget is nearly gone
+        self.on_wait = on_wait  # callback(seconds, reason) so long waits don't look like a hang
         self._lock = threading.Lock()
         self._http = httpx.Client(base_url=settings.groq_base_url, timeout=45)
 
+    def _sleep(self, seconds: float, reason: str) -> None:
+        if seconds > 3 and self.on_wait:
+            self.on_wait(seconds, reason)
+        time.sleep(seconds)
+
     def _throttle(self) -> None:
         with self._lock:
-            wait = self.min_interval_s - (time.monotonic() - self._last)
+            wait = max(self.min_interval_s - (time.monotonic() - self._last), self._resume_at - time.monotonic())
             if wait > 0:
-                time.sleep(wait)
+                self._sleep(wait, "Groq per-minute token limit")
             self._last = time.monotonic()
+
+    def _note_limits(self, headers, need_tokens: int) -> None:
+        """Free tier: 8K tokens/minute. If the remaining budget can't fit another
+        call, wait for the reset instead of firing a request that will get a 429."""
+        try:
+            remaining = int(headers.get("x-ratelimit-remaining-tokens", "1000000"))
+        except ValueError:
+            return
+        if remaining < need_tokens:
+            self._resume_at = time.monotonic() + parse_duration(headers.get("x-ratelimit-reset-tokens")) + 0.5
 
     @property
     def is_reasoning_model(self) -> bool:
@@ -66,7 +99,9 @@ class GroqClient:
             # non-reasoning model (300 / 1200) ran out during reasoning, so Groq
             # returned json_validate_failed "max completion tokens reached".
             payload["reasoning_effort"] = settings.reasoning_effort
-            payload["max_tokens"] = max(max_tokens * 3, 2000)
+            # x2 (min 1200), not x3: on the free tier (8K tokens/min) a 3,600-token
+            # budget let two calls exhaust the whole minute.
+            payload["max_tokens"] = max(max_tokens * 2, 1200)
         return payload
 
     def chat_json(self, system: str, user: str, usage: Usage | None = None, temperature: float = 0.1, max_tokens: int = 1200) -> dict:
@@ -85,7 +120,15 @@ class GroqClient:
                 last_err = str(e)
                 time.sleep(1.5 * (attempt + 1))
                 continue
-            if r.status_code == 429 or r.status_code >= 500:
+            if r.status_code == 429:
+                body = r.text[:400]
+                retry_after = float(r.headers.get("retry-after", 5 * (attempt + 1)))
+                if "per day" in body.lower() or "tpd" in body.lower() or "rpd" in body.lower() or retry_after > 120:
+                    raise RateLimitExhausted(f"Groq daily limit reached for {self.model}: {body}")
+                last_err = f"HTTP 429: {body}"
+                self._sleep(min(retry_after + 1, 65), "Groq rate limit (429)")
+                continue
+            if r.status_code >= 500:
                 # Free-tier limits are per MINUTE (requests and tokens); reasoning models
                 # burn tokens fast, so honour retry-after fully, up to a minute.
                 # (Bug: capping the wait at 10s gave up before the window reset.)
@@ -101,6 +144,7 @@ class GroqClient:
                 continue
             if r.status_code != 200:
                 raise LLMError(f"Groq HTTP {r.status_code}: {r.text[:300]}")
+            self._note_limits(r.headers, need_tokens=payload["max_tokens"] + 2500)
             data = r.json()
             if usage is not None:
                 u = data.get("usage", {})

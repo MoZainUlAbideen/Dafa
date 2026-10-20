@@ -70,6 +70,18 @@ def canonical_citations(answer: str) -> str:
     return _GROUP_RE.sub(fix, answer)
 
 
+def attach_citations(answer: str, citations) -> str:
+    """The model lists the keys it relied on in a separate JSON field (structured
+    output is far more reliable than markers inside free text). If the answer
+    text carries no inline [book:id] markers, show the listed keys at the end.
+    The verifier still checks every one of them against the provided CONTEXT."""
+    if MARKER_RE.search(answer) or not isinstance(citations, list):
+        return answer
+    canon = canonical_citations(" ".join(f"[{c}]" for c in citations if isinstance(c, str)))
+    keys = list(dict.fromkeys(re.findall(r"\[(?:ppc|constitution):[^\]]+\]", canon)))  # dedupe, keep order
+    return f"{answer}\n\nSources: {' '.join(keys)}" if keys else answer
+
+
 @dataclass
 class Verdict:
     ok: bool

@@ -62,3 +62,14 @@ def test_canonical_citations_variants():
     assert canonical_citations("See (PPC: 489F) and [constitution 25a]") == "See [ppc:489-F] and [constitution:25A]"
     assert canonical_citations("Both [ppc:378, ppc:379] apply") == "Both [ppc:378] [ppc:379] apply"
     assert canonical_citations("Already [ppc:379] fine") == "Already [ppc:379] fine"
+
+
+def test_attach_citations_from_structured_field():
+    from dafa.pipeline.verify import attach_citations
+    out = attach_citations("Theft carries up to three years.", ["ppc:379", "PPC: 379"])
+    assert out.endswith("Sources: [ppc:379]")
+    assert verify(out, [], CTX).ok
+    # inline markers present -> unchanged
+    assert attach_citations("See [ppc:379].", ["ppc:420"]) == "See [ppc:379]."
+    # listed key that was never provided is still caught by the verifier
+    assert not verify(attach_citations("x", ["ppc:999"]), [], CTX).ok

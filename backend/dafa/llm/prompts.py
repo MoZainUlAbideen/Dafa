@@ -1,6 +1,6 @@
 """All prompts in one place, so they can be versioned and evaluated."""
 
-PROMPT_VERSION = "v1"
+PROMPT_VERSION = "v2"  # v2: separate "citations" field (inline markers alone were unreliable at low reasoning effort)
 
 REWRITE_SYSTEM = """You turn a user's question about Pakistani law into a search query.
 The user may write in English, Urdu script, or Roman Urdu (Urdu in Latin letters).
@@ -32,6 +32,7 @@ starts with a key in square brackets like [ppc:302] or [constitution:25A].
 Return ONLY a JSON object:
 {
   "answer": "<markdown answer>",
+  "citations": ["<every key you relied on, e.g. ppc:302>"],
   "quotes": [{"key": "ppc:302", "text": "<exact words copied from that section>"}]
 }
 
@@ -48,6 +49,9 @@ Rules for "answer":
   specific case; you may explain what the law says and suggest consulting a
   lawyer.
 - Keep it under 220 words.
+
+Rules for "citations": list every CONTEXT key your answer relies on (at least
+one). Only keys that appear in CONTEXT.
 
 Rules for "quotes": 1-3 short verbatim phrases (under 30 words each) copied
 character-for-character from the sections you relied on. Quotes stay in English.
