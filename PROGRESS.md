@@ -8,7 +8,7 @@
 - [x] 4. Frontend: stamp-paper design, landing, /ask workspace, /read pages (production build passes)
 - [x] 5. Ingestion: official PDFs -> Constitution (328 articles) + PPC (639 sections) JSON, CrPC Schedule II joined to 410 sections (tests)
 - [x] 6. Golden set verified against the source PDFs; retrieval evals run, failures diagnosed and fixed; held-out split added
-- [ ] 7. Full end-to-end evals with Groq (run locally with GROQ_API_KEY); failures diagnosed and fixed
+- [ ] 7. Full end-to-end evals with Groq (run locally with GROQ_API_KEY); failures diagnosed and fixed (in progress: bugs 17-22 fixed)
 - [ ] 8. Backend live on Render
 - [ ] 9. Frontend live on Vercel, connected to the live backend
 - [ ] 10. README results section filled in, LinkedIn post
@@ -61,3 +61,9 @@ Each has a regression test.
 | 14 | Row 414 merged into the previous row | first row sat 3pt above where the ruling lines start | column lines sampled over the row's first 15pt |
 | 15 | Misdiagnosis (reverted): lowering the global size cutoff to fix #13 dropped whole 7pt pages | table text size varies per page (9pt / 7pt) | per-page body size, cutoff 0.85x |
 | 16 | "lawyer if the police arrest me" never found Article 10 | router hard-filtered to the PPC on the word "police" | router hints are a soft score boost, rights words point to the Constitution |
+| 17 | Every full-eval case failed with HTTP 404 | Groq retired the default model `llama-3.3-70b-versatile` | default is now `openai/gpt-oss-120b`; eval preflight fails fast with a clear message; `python -m dafa.llm.groq_client` lists usable models |
+| 18 | "max completion tokens reached before generating a valid document" | gpt-oss is a reasoning model; hidden reasoning tokens count against `max_tokens` (300/1200 was too small) | `reasoning_effort: low`, larger budget for reasoning models, one retry with double budget on `json_validate_failed` |
+| 19 | Answers with no citation passed verification (lookup-06) | the verifier only rejected *bad* citations; zero citations had nothing to reject | no citations = not verified, triggers the repair round |
+| 20 | Every lookup failed `cites_expected` at low reasoning effort | model drifted from the `[ppc:302]` format | all citation variants (【ppc:302】, (PPC: 489F), [ppc:378, ppc:379]) are canonicalised; raw first draft saved in eval rows for diagnosis |
+| 21 | Correct quote rejected | source uses a non-breaking hyphen (U+2011) | quote normaliser maps every dash variant to "-" |
+| 22 | Runs ended in a wall of HTTP 429 | free tier is 8K tokens/min and 200K tokens/day; client gave up after 10s and budgets were too large | honour retry-after; pace on `x-ratelimit-remaining-tokens`; smaller prompts (4 sections x 1,200 chars); daily-limit 429 stops the eval cleanly and `--resume` continues later |

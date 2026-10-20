@@ -126,6 +126,7 @@ def run(mode: str, only: str | None) -> dict:
             keys = [s.key for s in res.sections]
             row["got"] = keys[:K]
             row["answer"] = res.answer
+            row["raw_draft"] = res.raw_draft
             row["warnings"] = res.warnings
             row.update(grade_retrieval(case, keys))
             row.update(grade_answer(case, res))

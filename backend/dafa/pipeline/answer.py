@@ -21,7 +21,7 @@ from dafa.config import settings
 from dafa.llm import prompts
 from dafa.llm.groq_client import GroqClient, LLMError, Usage
 from dafa.models import Section
-from dafa.pipeline.verify import strip_bad_markers, verify
+from dafa.pipeline.verify import canonical_citations, strip_bad_markers, verify
 from dafa.retrieval.router import route
 from dafa.retrieval.store import LawStore
 
@@ -47,6 +47,7 @@ class AnswerResult:
     warnings: list[str] = field(default_factory=list)
     timings_ms: dict[str, int] = field(default_factory=dict)
     usage: dict = field(default_factory=dict)
+    raw_draft: str = ""  # the model's first draft before any fixing (for evals / debugging)
 
 
 def detect_language(query: str) -> str:
@@ -146,13 +147,14 @@ class Pipeline:
         user = f"QUESTION: {query}\n\nCONTEXT:\n{context_text}"
         try:
             draft = self.llm.chat_json(system, user, usage=usage)
-            answer_text = str(draft.get("answer", "")).strip()
+            raw_draft = str(draft.get("answer", ""))
+            answer_text = canonical_citations(raw_draft.strip())
             quotes = [q for q in draft.get("quotes", []) if isinstance(q, dict)]
             verdict = verify(answer_text, quotes, ctx)
             if not verdict.ok:  # one repair round with the exact problems listed
                 repair = prompts.REPAIR_NOTE.format(problems="\n".join(verdict.problems))
                 draft = self.llm.chat_json(system, f"{user}\n\nPREVIOUS ANSWER:\n{answer_text}\n\n{repair}", usage=usage)
-                answer_text = str(draft.get("answer", "")).strip()
+                answer_text = canonical_citations(str(draft.get("answer", "")).strip())
                 quotes = [q for q in draft.get("quotes", []) if isinstance(q, dict)]
                 verdict = verify(answer_text, quotes, ctx)
             if not verdict.ok:
@@ -171,7 +173,7 @@ class Pipeline:
         ordered = [s for s in sections if s.key.lower() in cited] + [s for s in sections if s.key.lower() not in cited]
         return AnswerResult(
             query, "answer", answer_text, language, ordered, quotes=quotes,
-            verified=verdict.ok, warnings=warnings, timings_ms=timings, usage=_usage(usage),
+            verified=verdict.ok, warnings=warnings, timings_ms=timings, usage=_usage(usage), raw_draft=raw_draft,
         )
 
 

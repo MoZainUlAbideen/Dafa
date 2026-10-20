@@ -76,7 +76,7 @@ class GroqClient:
         payload = self.build_payload(system, user, temperature, max_tokens)
         last_err = ""
         json_retry_done = False
-        for attempt in range(4):
+        for attempt in range(7):
             self._throttle()
             t0 = time.monotonic()
             try:
@@ -86,9 +86,12 @@ class GroqClient:
                 time.sleep(1.5 * (attempt + 1))
                 continue
             if r.status_code == 429 or r.status_code >= 500:
-                retry_after = float(r.headers.get("retry-after", 2 * (attempt + 1)))
+                # Free-tier limits are per MINUTE (requests and tokens); reasoning models
+                # burn tokens fast, so honour retry-after fully, up to a minute.
+                # (Bug: capping the wait at 10s gave up before the window reset.)
+                retry_after = float(r.headers.get("retry-after", 5 * (attempt + 1)))
                 last_err = f"HTTP {r.status_code}"
-                time.sleep(min(retry_after, 10))
+                time.sleep(min(retry_after + 1, 65))
                 continue
             if r.status_code == 400 and "json_validate_failed" in r.text and not json_retry_done:
                 # The model ran out of room or produced invalid JSON: retry once with double budget.

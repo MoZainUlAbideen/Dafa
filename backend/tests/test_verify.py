@@ -42,3 +42,23 @@ def test_number_written_in_words_in_source_counts():
 
 def test_strip_bad_markers():
     assert strip_bad_markers("A [ppc:380] B", ["ppc:380"]) == "A  B"
+
+
+def test_answer_without_any_citation_fails():
+    # Regression: zero citations used to pass verification (nothing to reject).
+    v = verify("Theft is punishable with imprisonment up to three years.", [], CTX)
+    assert not v.ok and v.no_citations
+
+
+def test_quote_with_non_breaking_hyphen_matches():
+    ctx = {"ppc:381-A": "Whoever commits theft of a car or any other motor vehicle, including motor-cycle"}
+    q = [{"key": "ppc:381-A", "text": "including motor‑cycle"}]
+    assert verify("[ppc:381-A]", q, ctx).ok
+
+
+def test_canonical_citations_variants():
+    from dafa.pipeline.verify import canonical_citations
+    assert canonical_citations("See 【ppc:302】.") == "See [ppc:302]."
+    assert canonical_citations("See (PPC: 489F) and [constitution 25a]") == "See [ppc:489-F] and [constitution:25A]"
+    assert canonical_citations("Both [ppc:378, ppc:379] apply") == "Both [ppc:378] [ppc:379] apply"
+    assert canonical_citations("Already [ppc:379] fine") == "Already [ppc:379] fine"

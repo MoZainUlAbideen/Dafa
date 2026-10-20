@@ -46,3 +46,18 @@ def test_json_validate_failed_retries_once_with_double_budget():
 
 def test_json_wrapped_in_prose_is_parsed():
     assert client_with(lambda r: ok('Here: {"ok": true} done')).chat_json("s", "u") == {"ok": True}
+
+
+def test_429_honours_retry_after(monkeypatch):
+    sleeps = []
+    monkeypatch.setattr("dafa.llm.groq_client.time.sleep", lambda s: sleeps.append(s))
+    calls = []
+
+    def handler(request):
+        calls.append(1)
+        if len(calls) == 1:
+            return httpx.Response(429, headers={"retry-after": "30"}, json={"error": {"code": "rate_limit_exceeded"}})
+        return ok('{"ok": true}')
+
+    assert client_with(handler).chat_json("s", "u") == {"ok": True}
+    assert any(s >= 30 for s in sleeps)  # waited the full window, not 10s

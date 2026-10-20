@@ -33,7 +33,9 @@ def normalise(text: str) -> str:
     """Make comparisons robust to quote styles, dashes and whitespace."""
     text = text.lower()
     text = text.replace("’", "'").replace("‘", "'").replace("“", '"').replace("”", '"')
-    text = re.sub(r"[–—\-]+", "-", text)
+    text = text.replace("\u00ad", "")  # soft hyphen
+    # all dash variants -> "-" (bug: a correct quote with U+2011 "motor\u2011cycle" was rejected)
+    text = re.sub(r"[\u2010\u2011\u2012\u2013\u2014\u2212\-]+", "-", text)
     text = re.sub(r"\s+", " ", text)
     return text.strip(" .;:,\"'")
 
@@ -47,12 +49,34 @@ def _numbers_in(text: str) -> set[str]:
     return nums
 
 
+# Citation variants models produce instead of "[ppc:302]": gpt-oss's native
+# 【ppc:302】, (ppc:302), [PPC 302], [ppc:302, ppc:379] ...
+_KEY = r"(ppc|constitution)\s*[:\s]\s*(\d{1,3}\s*-?\s*[A-Za-z]{0,3})"
+_GROUP_RE = re.compile(r"[\[\u3010(]\s*(" + _KEY + r"(?:\s*[,;]\s*" + _KEY + r")*)\s*[\]\u3011)]", re.IGNORECASE)
+_ONE_RE = re.compile(_KEY, re.IGNORECASE)
+
+
+def canonical_citations(answer: str) -> str:
+    """Rewrite every citation variant into the canonical "[book:id]" form the
+    verifier and the frontend understand."""
+    def fix(m: re.Match) -> str:
+        keys = []
+        for b, i in _ONE_RE.findall(m.group(1)):
+            i = re.sub(r"\s+", "", i).upper()
+            if b.lower() == "ppc":
+                i = re.sub(r"^(\d+)([A-Z]+)$", r"\1-\2", i)
+            keys.append(f"[{b.lower()}:{i}]")
+        return " ".join(keys)
+    return _GROUP_RE.sub(fix, answer)
+
+
 @dataclass
 class Verdict:
     ok: bool
     bad_citations: list[str] = field(default_factory=list)
     bad_quotes: list[str] = field(default_factory=list)
     unsupported_numbers: list[str] = field(default_factory=list)
+    no_citations: bool = False
 
     @property
     def problems(self) -> list[str]:
@@ -63,6 +87,8 @@ class Verdict:
             out.append(f"Quotes not found verbatim in the cited section: {self.bad_quotes}")
         if self.unsupported_numbers:
             out.append(f"Numbers not present in any provided section: {', '.join(self.unsupported_numbers)}")
+        if self.no_citations:
+            out.append("The answer cites no section. Cite the sections you used with their keys, e.g. [ppc:379].")
         return out
 
 
@@ -95,8 +121,12 @@ def verify(answer: str, quotes: list[dict], context: dict[str, str]) -> Verdict:
         if num and num not in all_numbers:
             unsupported.append(m.group(0).strip())
 
-    ok = not bad_cites and not bad_quotes and not unsupported
-    return Verdict(ok, sorted(set(bad_cites)), bad_quotes, unsupported)
+    # An answer with zero citations used to pass (nothing to reject). Bug found in
+    # full evals: every claim must be traceable, so no citations = not verified.
+    good_cites = [1 for book, sid in MARKER_RE.findall(answer) if f"{book}:{sid}".lower().replace("-", "") in canon]
+    no_cites = bool(context) and not good_cites
+    ok = not bad_cites and not bad_quotes and not unsupported and not no_cites
+    return Verdict(ok, sorted(set(bad_cites)), bad_quotes, unsupported, no_cites)
 
 
 def strip_bad_markers(answer: str, bad: list[str]) -> str:
