@@ -47,17 +47,24 @@ class Usage:
 
 
 class GroqClient:
-    def __init__(self, api_key: str | None = None, model: str | None = None, min_interval_s: float = 0.5, on_wait=None):
+    def __init__(self, api_key: str | None = None, model: str | None = None, min_interval_s: float = 0.5, on_wait=None,
+                 max_wait_s: float = 65.0):
         self.api_key = api_key if api_key is not None else settings.groq_api_key
         self.model = model or settings.groq_model
         self.min_interval_s = min_interval_s
         self._last = 0.0
         self._resume_at = 0.0  # set from x-ratelimit headers when the minute's token budget is nearly gone
         self.on_wait = on_wait  # callback(seconds, reason) so long waits don't look like a hang
+        # Batch jobs (evals) can wait out a rate-limit window; a live web request
+        # must not keep a visitor waiting a minute, so the API uses a short max wait
+        # and falls back to showing the matching sections.
+        self.max_wait_s = max_wait_s
         self._lock = threading.Lock()
         self._http = httpx.Client(base_url=settings.groq_base_url, timeout=45)
 
     def _sleep(self, seconds: float, reason: str) -> None:
+        if seconds > self.max_wait_s:
+            raise LLMError(f"{reason}: would need to wait {seconds:.0f}s (max {self.max_wait_s:.0f}s)")
         if seconds > 3 and self.on_wait:
             self.on_wait(seconds, reason)
         time.sleep(seconds)

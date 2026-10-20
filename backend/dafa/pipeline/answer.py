@@ -169,7 +169,9 @@ class Pipeline:
         except LLMError as e:
             log.warning("draft failed: %s", e)
             timings["total"] = int((time.monotonic() - t0) * 1000)
-            warnings.append("The answer writer is unavailable right now; showing the matching sections.")
+            busy = "limit" in str(e).lower() or "429" in str(e)
+            warnings.append("The answer writer is busy right now (free-tier usage limit), so here are the matching sections. Try again in a minute."
+                            if busy else "The answer writer is unavailable right now; showing the matching sections.")
             return AnswerResult(query, "search_only", SEARCH_ONLY[language], language, sections, warnings=warnings,
                                 timings_ms=timings, usage=_usage(usage), llm_error=str(e))
         timings["draft_verify"] = int((time.monotonic() - t2) * 1000)

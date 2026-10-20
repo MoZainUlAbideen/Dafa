@@ -221,7 +221,9 @@ function Workspace() {
                             ) : (
                               <span className="warn">Some claims couldn&rsquo;t be verified and were removed</span>
                             ))}
-                          {t.res.mode === "search_only" && <span>Matching sections only, no written answer</span>}
+                          {t.res.mode === "search_only" && (
+                            <span>{t.res.warnings.length ? t.res.warnings[t.res.warnings.length - 1] : "Matching sections only, no written answer"}</span>
+                          )}
                           {t.res.timings_ms.total != null && <span>{(t.res.timings_ms.total / 1000).toFixed(1)}s</span>}
                         </div>
                       </>

@@ -60,3 +60,17 @@ def test_unfixable_answer_is_stripped_and_flagged(store):
     assert not res.verified
     assert "[ppc:381]" not in res.answer and "[ppc:379]" in res.answer
     assert res.quotes == [] and res.warnings
+
+
+def test_rate_limited_writer_falls_back_to_sections_with_a_busy_note(store):
+    from dafa.llm.groq_client import LLMError
+
+    class BusyLLM:
+        api_key = "x"
+
+        def chat_json(self, *a, **k):
+            raise LLMError("Groq rate limit (429): would need to wait 40s (max 8s)")
+
+    res = Pipeline(store, llm=BusyLLM()).answer("section 379")
+    assert res.mode == "search_only" and res.sections[0].id == "379"
+    assert "busy" in res.warnings[-1]

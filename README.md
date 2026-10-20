@@ -125,7 +125,8 @@ The harness reports pass rate, hit@5, recall@5, MRR and verified-answer rate, br
 |---|---|---|---|---|---|
 | retrieval only | dev (used while tuning) | 44 | 98% | 0.974 | 0.810 |
 | retrieval only | held-out (never tuned on) | 12 | 58% | 0.583 | 0.371 |
-| full (Groq rewrite + verified answer) | both | 56 | pending | | |
+| full, prompt v1 (before fixes 18-22) | all | 59 | 41% | 0.94 | 0.834 |
+| full, prompt v2 (after fixes) | all | 59 | pending (free-tier daily quota) | | |
 
 The gap between dev and held-out is the honest finding: keyword search alone misses paraphrases like "lied under oath" (the law says "false evidence"). Full mode measures whether the LLM rewrite closes it. Details and the bug log are in [PROGRESS.md](PROGRESS.md).
 
@@ -170,6 +171,8 @@ The free plan sleeps after inactivity; the first request after a nap takes up to
 `book` is `constitution` or `ppc`.
 
 ## Production touches
+
+- Built for Groq's free tier (8K tokens/minute, 200K/day): small prompts, pacing on `x-ratelimit-*` headers, and when the quota is hit the site still answers with the matching sections and a "busy" note instead of failing
 
 - Per-IP rate limiting on `/ask` to protect the Groq quota
 - LRU cache for verified answers

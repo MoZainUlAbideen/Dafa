@@ -33,7 +33,8 @@ Golden set: 56 cases (44 dev, 12 held-out). Expected sections and Schedule II va
 | 2026-10-20 | retrieval | dev | 44 | 80% | 0.763 | 0.646 | first run on real data |
 | 2026-10-20 | retrieval | dev | 44 | 98% | 0.974 | 0.810 | after router + glossary + stemming fixes |
 | 2026-10-20 | retrieval | held-out | 12 | 58% | 0.583 | 0.371 | honest number: keyword search alone misses paraphrases |
-| (next) | full (Groq) | both | 56 | | | | measures whether the LLM query rewrite closes the held-out gap |
+| 2026-10-20 | full (gpt-oss-120b, prompt v1) | all | 59 | 41% | 0.94 | 0.834 | first full run; most failures were bug 18 (token budget) and bug 20 (citations), so this measures the bugs more than the model. Verified-answer rate 68%; held-out pass 17% |
+| (next) | full (gpt-oss-120b, prompt v2) | all | 59 | | | | re-run after fixes 17-23; blocked today by the free-tier daily quota (200K tokens), resume with `--resume` |
 
 Takeaway: the 98% dev number is optimistic because the glossary was extended using dev failures. The held-out
 split shows the real vocabulary gap ("lied under oath" vs "false evidence", "punished twice" vs "double punishment").
@@ -67,3 +68,5 @@ Each has a regression test.
 | 20 | Every lookup failed `cites_expected` at low reasoning effort | model drifted from the `[ppc:302]` format | all citation variants (【ppc:302】, (PPC: 489F), [ppc:378, ppc:379]) are canonicalised; raw first draft saved in eval rows for diagnosis |
 | 21 | Correct quote rejected | source uses a non-breaking hyphen (U+2011) | quote normaliser maps every dash variant to "-" |
 | 22 | Runs ended in a wall of HTTP 429 | free tier is 8K tokens/min and 200K tokens/day; client gave up after 10s and budgets were too large | honour retry-after; pace on `x-ratelimit-remaining-tokens`; smaller prompts (4 sections x 1,200 chars); daily-limit 429 stops the eval cleanly and `--resume` continues later |
+| 23 | Live site would hang up to a minute on a rate limit | the client waited out 429 windows (right for evals, wrong for web requests) | API client has `max_wait_s=8`; beyond that it falls back to the matching sections with a "busy, try again in a minute" note shown in the UI |
+| 24 | Fixes "reverted" on the dev machine (twice) | my delivery race: files were sent to the machine in the same step as they were copied, so stale copies went out | copy, then send, then byte-compare every file on the machine |

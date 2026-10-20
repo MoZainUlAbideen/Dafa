@@ -45,7 +45,9 @@ _pipeline: Pipeline | None = None
 def pipeline() -> Pipeline:
     global _pipeline
     if _pipeline is None:
-        _pipeline = Pipeline(get_store(), GroqClient() if settings.llm_enabled else None)
+        # max_wait_s=8: on the free tier a visitor gets the matching sections fast
+        # instead of waiting up to a minute for the rate-limit window to reset.
+        _pipeline = Pipeline(get_store(), GroqClient(max_wait_s=8.0) if settings.llm_enabled else None)
     return _pipeline
 
 

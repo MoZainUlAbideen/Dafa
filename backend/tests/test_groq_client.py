@@ -105,3 +105,17 @@ def test_long_waits_are_reported(monkeypatch):
     c.on_wait = lambda s, why: seen.append((round(s), why))
     c.chat_json("s", "u")
     assert seen and seen[0][0] >= 20 and "429" in seen[0][1]
+
+
+def test_api_client_gives_up_fast_instead_of_waiting_a_minute(monkeypatch):
+    from dafa.llm.groq_client import LLMError
+    slept = []
+    monkeypatch.setattr("dafa.llm.groq_client.time.sleep", lambda s: slept.append(s))
+    c = client_with(lambda r: httpx.Response(429, headers={"retry-after": "40"}, json={"error": {"message": "tokens per minute"}}))
+    c.max_wait_s = 8
+    try:
+        c.chat_json("s", "u")
+        raise AssertionError("should have raised")
+    except LLMError as e:
+        assert "would need to wait" in str(e)
+    assert not any(s > 8 for s in slept)
