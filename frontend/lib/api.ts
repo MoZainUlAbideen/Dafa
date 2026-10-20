@@ -73,11 +73,20 @@ export const api = {
   },
 };
 
-/** Turn a Schedule II cell into a yes/no/unknown verdict for the stamp. */
-export function verdict(cell: string | undefined, yesWords: RegExp, noWords: RegExp): "yes" | "no" | null {
+export type Verdict = "yes" | "no" | "mixed" | null;
+
+/** Turn a Schedule II cell into a verdict for the stamp.
+ *  "mixed": the row covers several forms of the offence with different answers
+ *  ("Bailable. Not bailable.") or the answer is conditional ("According as ...", "if ..."). */
+export function verdict(cell: string | undefined, yes: RegExp, no: RegExp): Verdict {
   if (!cell) return null;
   const c = cell.toLowerCase();
-  if (noWords.test(c)) return "no";
-  if (yesWords.test(c)) return "yes";
+  if (/\baccording\b|\bif\b|\bdepends\b/.test(c)) return "mixed";
+  const noG = new RegExp(no.source, "g");
+  const hasNo = noG.test(c);
+  const hasYes = yes.test(c.replace(new RegExp(no.source, "g"), " "));
+  if (hasNo && hasYes) return "mixed";
+  if (hasNo) return "no";
+  if (hasYes) return "yes";
   return null;
 }

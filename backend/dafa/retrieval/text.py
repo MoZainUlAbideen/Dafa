@@ -30,8 +30,8 @@ GLOSSARY: dict[str, list[str]] = {
     "chhina": ["robbery", "snatching"], "chheenna": ["robbery", "snatching"],
     "daka": ["dacoity", "robbery"], "dakaiti": ["dacoity"], "dacoit": ["dacoity"],
     "ڈکیتی": ["dacoity"],
-    "qatl": ["qatl", "murder"], "katal": ["qatl", "murder"], "qatal": ["qatl", "murder"],
-    "قتل": ["qatl"], "murder": ["qatl", "murder"], "kill": ["qatl"], "killed": ["qatl"],
+    "qatl": ["qatl", "qatl-i-amd"], "katal": ["qatl", "qatl-i-amd"], "qatal": ["qatl", "qatl-i-amd"],
+    "قتل": ["qatl", "qatl-i-amd"], "murder": ["qatl", "qatl-i-amd"], "kill": ["qatl"], "killed": ["qatl"],
     "dhoka": ["cheating"], "dhokay": ["cheating"], "dhokha": ["cheating"], "fraud": ["cheating"],
     "دھوکہ": ["cheating"], "scam": ["cheating"],
     "rishwat": ["gratification", "bribery"], "bribe": ["gratification", "bribery"],
@@ -72,6 +72,16 @@ GLOSSARY: dict[str, list[str]] = {
     "nasha": ["intoxication"], "sharab": ["intoxication"],
     "blasphemy": ["religion", "prophet", "defiling"], "toheen": ["insult", "defamation"],
     "riot": ["rioting"], "fasad": ["rioting", "affray"], "jhagra": ["affray", "hurt"],
+    # everyday English verbs -> the statute's nouns (added after eval failures)
+    "steal": ["theft"], "stole": ["theft"], "stolen": ["theft"], "stealing": ["theft"],
+    "snatch": ["robbery"], "snatched": ["robbery"], "snatching": ["robbery"], "mugged": ["robbery"],
+    "gunpoint": ["robbery", "hurt"], "looted": ["robbery", "dacoity"],
+    "reputation": ["defamation"], "lies": ["defamation"], "slander": ["defamation"], "libel": ["defamation"],
+    "lawyer": ["legal", "practitioner"], "wakeel": ["legal", "practitioner"], "advocate": ["legal", "practitioner"],
+    "custody": ["custody", "detention", "arrest"], "detained": ["detention", "arrest"],
+    "saza": ["punishment"], "سزا": ["punishment"], "jail": ["imprisonment"], "qaid": ["imprisonment"],
+    "huqooq": ["rights", "fundamental"], "haq": ["right"], "حقوق": ["rights", "fundamental"],
+    "embezzle": ["criminal", "breach", "trust"], "embezzled": ["criminal", "breach", "trust"],
 }
 
 _TOKEN_RE = re.compile(r"[\w؀-ۿ]+(?:-[\w]+)*", re.UNICODE)
@@ -82,9 +92,9 @@ def stem(tok: str) -> str:
     like 'qatl-i-amd' and 'dishonestly' must survive intact enough to match."""
     if len(tok) <= 4 or not tok.isascii():
         return tok
-    for suf in ("ings", "ing", "edly", "ed", "es", "s"):
+    for suf in ("ings", "ing", "edly", "fully", "ly", "ed", "es", "s"):
         if tok.endswith(suf) and len(tok) - len(suf) >= 4:
-            return tok[: -len(suf)]
+            return tok[: -len(suf)] + ("ful" if suf == "fully" else "")
     return tok
 
 

@@ -99,7 +99,7 @@ Open http://localhost:3000.
 
 ### 3. Rebuild the law data (only if you change the PDFs or parsers)
 
-Place the official PDFs in `backend/data/raw/` as `constitution.pdf`, `ppc.pdf` and `crpc.pdf`, then:
+The official PDFs are committed in `backend/data/raw/` (`constitution.pdf`, `ppc.pdf`, `crpc.pdf`; sources in PROGRESS.md). After changing a parser:
 
 ```bash
 cd backend
@@ -119,7 +119,23 @@ uv run python -m evals.run_evals --mode full      # end-to-end with Groq
 
 The harness reports pass rate, hit@5, recall@5, MRR and verified-answer rate, broken down by question type (section lookup, situation to section, Roman Urdu, Urdu, Constitution rights, Schedule II facts, out-of-scope). Each run writes `evals/results/report.html` and appends to `evals/results/history.jsonl` so regressions show up between runs.
 
-Results: see [PROGRESS.md](PROGRESS.md) for the latest numbers.
+### Latest results
+
+| Mode | Split | Cases | Pass rate | hit@5 | MRR |
+|---|---|---|---|---|---|
+| retrieval only | dev (used while tuning) | 44 | 98% | 0.974 | 0.810 |
+| retrieval only | held-out (never tuned on) | 12 | 58% | 0.583 | 0.371 |
+| full (Groq rewrite + verified answer) | both | 56 | pending | | |
+
+The gap between dev and held-out is the honest finding: keyword search alone misses paraphrases like "lied under oath" (the law says "false evidence"). Full mode measures whether the LLM rewrite closes it. Details and the bug log are in [PROGRESS.md](PROGRESS.md).
+
+### What the extraction produces
+
+- **Constitution:** 328 articles (1 to 280, lettered articles included; 15 omitted ones flagged), amended up to the 27th Amendment
+- **Penal Code:** 639 sections (1 to 511; 21 omitted ones flagged), amended up to 14 Dec 2023
+- **CrPC Schedule II:** joined to 410 PPC sections (one scanned page in the source has no text layer)
+
+No numbering gaps in either book; integrity checks live in `tests/test_processed_data.py`.
 
 ## Deploy
 

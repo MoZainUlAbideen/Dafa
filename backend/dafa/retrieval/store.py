@@ -67,13 +67,18 @@ class LawStore:
                 return (rows[i - 1] if i > 0 else None, rows[i + 1] if i + 1 < len(rows) else None)
         return None, None
 
-    def search(self, query: str, k: int = 6, book: str | None = None, extra_terms: list[str] | None = None) -> list[Hit]:
+    def search(self, query: str, k: int = 6, book: str | None = None, extra_terms: list[str] | None = None,
+               prefer: str | None = None, prefer_boost: float = 1.35) -> list[Hit]:
+        """`book` filters hard (used when the LLM rewrite is confident);
+        `prefer` only boosts that book's scores (router keyword hints)."""
         terms = expand_query(query)
         for t in extra_terms or []:
             terms.extend(tokenize(t))
         allowed = self._book_idx.get(book) if book else None
-        hits = self.bm25.top(terms, k * 3, allowed)
-        out = [Hit(self.sections[i], sc) for i, sc in hits if not self.sections[i].omitted]
+        hits = self.bm25.top(terms, k * 4, allowed)
+        scored = [(i, sc * (prefer_boost if prefer and self.sections[i].book == prefer else 1.0)) for i, sc in hits]
+        scored.sort(key=lambda x: -x[1])
+        out = [Hit(self.sections[i], sc) for i, sc in scored if not self.sections[i].omitted]
         return out[:k]
 
     def toc(self, book: str) -> list[dict]:

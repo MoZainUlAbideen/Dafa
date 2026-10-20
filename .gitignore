@@ -13,3 +13,7 @@ frontend/tsconfig.tsbuildinfo
 .DS_Store
 Thumbs.db
 .vscode/
+
+# duplicate downloads (the build reads constitution.pdf / ppc.pdf / crpc.pdf)
+backend/data/raw/dafa-*.pdf
+backend/data/raw/PUT_PDFS_HERE.txt

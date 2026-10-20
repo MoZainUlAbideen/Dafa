@@ -102,7 +102,7 @@ def run(mode: str, only: str | None) -> dict:
     rows = []
     for case in load_cases(only):
         t0 = time.monotonic()
-        row: dict = {"id": case["id"], "type": case["type"], "query": case.get("query", case.get("section"))}
+        row: dict = {"id": case["id"], "type": case["type"], "split": case.get("split", "dev"), "query": case.get("query", case.get("section"))}
         if case["type"] == "schedule":
             row.update(grade_schedule(case, store))
             row["pass"] = row["pass"]
@@ -140,6 +140,11 @@ def summarise(rows: list[dict], mode: str) -> dict:
     for t in sorted({r["type"] for r in rows}):
         sub = [r for r in rows if r["type"] == t]
         by_type[t] = {"n": len(sub), "pass_rate": round(sum(r["pass"] for r in sub) / len(sub), 3)}
+    by_split = {}
+    for sp in sorted({r["split"] for r in rows}):
+        sub = [r for r in rows if r["split"] == sp]
+        by_split[sp] = {"n": len(sub), "pass_rate": round(sum(r["pass"] for r in sub) / len(sub), 3),
+                        f"hit@{K}": avg("hit", sub), "mrr": avg("rr", sub)}
     summary = {
         "when": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "mode": mode,
@@ -152,6 +157,7 @@ def summarise(rows: list[dict], mode: str) -> dict:
         "mrr": avg("rr"),
         "verified_rate": avg("verified"),
         "by_type": by_type,
+        "by_split": by_split,  # dev = cases used while tuning; heldout = written after, never tuned on
     }
     return {"summary": summary, "rows": rows}
 
@@ -170,6 +176,7 @@ def write_report(result: dict) -> None:
         for r in result["rows"]
     )
     types = "".join(f"<li>{t}: {v['pass_rate']:.0%} of {v['n']}</li>" for t, v in s["by_type"].items())
+    types += "".join(f"<li><b>{sp} split</b>: {v['pass_rate']:.0%} of {v['n']}</li>" for sp, v in s.get("by_split", {}).items())
     page = f"""<!doctype html><meta charset=utf-8><title>Dafa eval report</title>
 <style>body{{font:15px/1.5 system-ui;margin:32px;color:#16352b;background:#f4f7f3}}table{{border-collapse:collapse;width:100%}}
 td,th{{border-bottom:1px solid #cfdcd3;padding:6px 8px;text-align:left;vertical-align:top}}tr.fail td:first-child{{color:#a2272d;font-weight:700}}
@@ -191,6 +198,8 @@ def main() -> None:
     write_report(result)
     s = result["summary"]
     print(f"\npass rate {s['pass_rate']:.0%} | hit@{K} {s[f'hit@{K}']} | recall@{K} {s[f'recall@{K}']} | MRR {s['mrr']} | verified {s['verified_rate']}")
+    for sp, v in s["by_split"].items():
+        print(f"  {sp:<8} {v['pass_rate']:.0%} of {v['n']} | hit@{K} {v[f'hit@{K}']} | MRR {v['mrr']}")
     print(f"report: {RESULTS / 'report.html'}")
 
 

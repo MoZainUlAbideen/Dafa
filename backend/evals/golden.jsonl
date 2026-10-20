@@ -1,0 +1,59 @@
+{"id": "lookup-01", "type": "lookup", "query": "section 302", "expect": ["ppc:302"], "must_include": ["qisas"]}
+{"id": "lookup-02", "type": "lookup", "query": "dafa 489-F kya hai", "expect": ["ppc:489-F"], "language": "roman_ur"}
+{"id": "lookup-03", "type": "lookup", "query": "420 PPC", "expect": ["ppc:420"], "must_include": ["seven years"]}
+{"id": "lookup-04", "type": "lookup", "query": "Explain Article 25A", "expect": ["constitution:25A"], "must_include": ["sixteen"]}
+{"id": "lookup-05", "type": "lookup", "query": "What does Article 10A say?", "expect": ["constitution:10A"], "must_include": ["fair trial"]}
+{"id": "lookup-06", "type": "lookup", "query": "What is the punishment under section 379?", "expect": ["ppc:379"], "must_include": ["three years"]}
+{"id": "lookup-07", "type": "lookup", "query": "Section 124-A", "expect": ["ppc:124-A"]}
+{"id": "lookup-08", "type": "lookup", "query": "Article 6 of the constitution", "expect": ["constitution:6"], "must_include": ["high treason"]}
+{"id": "lookup-09", "type": "lookup", "query": "dafa 506", "expect": ["ppc:506"]}
+{"id": "lookup-10", "type": "lookup", "query": "Is section 406 bailable?", "expect": ["ppc:406"], "must_include": ["not bailable"]}
+{"id": "situation-01", "type": "situation", "query": "Someone stole my motorcycle from outside my house. What law applies?", "expect": ["ppc:378", "ppc:379", "ppc:380"]}
+{"id": "situation-02", "type": "situation", "query": "My cheque bounced and the person says he will file a case against me", "expect": ["ppc:489-F"]}
+{"id": "situation-03", "type": "situation", "query": "A government officer asked me for a bribe to process my file", "expect": ["ppc:161"]}
+{"id": "situation-04", "type": "situation", "query": "My cousin threatened to kill me. Is that a crime?", "expect": ["ppc:503", "ppc:506"]}
+{"id": "situation-05", "type": "situation", "query": "Someone forged my signature on a property document", "expect": ["ppc:463", "ppc:465", "ppc:467", "ppc:468"]}
+{"id": "situation-06", "type": "situation", "query": "Two men snatched my phone at gunpoint", "expect": ["ppc:390", "ppc:392", "ppc:382"]}
+{"id": "situation-07", "type": "situation", "query": "A man broke into our house at night while we were sleeping", "expect": ["ppc:454", "ppc:456", "ppc:457", "ppc:448", "ppc:445", "ppc:446"]}
+{"id": "situation-08", "type": "situation", "query": "Someone is spreading lies about me to ruin my reputation", "expect": ["ppc:499", "ppc:500"]}
+{"id": "situation-09", "type": "situation", "query": "A man at my office keeps making sexual remarks to female colleagues", "expect": ["ppc:509"]}
+{"id": "situation-10", "type": "situation", "query": "My business partner took the money I trusted him with and spent it on himself", "expect": ["ppc:405", "ppc:406"]}
+{"id": "roman-01", "type": "roman_ur", "query": "mera phone chori ho gaya, saza kya hai", "expect": ["ppc:378", "ppc:379", "ppc:380"], "language": "roman_ur"}
+{"id": "roman-02", "type": "roman_ur", "query": "cheque bounce ho gaya to kya hoga", "expect": ["ppc:489-F"], "language": "roman_ur"}
+{"id": "roman-03", "type": "roman_ur", "query": "kisi ne qatl kar diya to saza kya hai", "expect": ["ppc:302", "ppc:300"], "language": "roman_ur"}
+{"id": "roman-04", "type": "roman_ur", "query": "sarkari afsar ne rishwat mangi", "expect": ["ppc:161"], "language": "roman_ur"}
+{"id": "roman-05", "type": "roman_ur", "query": "us ne dhoka de kar mere paise le liye", "expect": ["ppc:415", "ppc:417", "ppc:420"], "language": "roman_ur"}
+{"id": "roman-06", "type": "roman_ur", "query": "jaan se maarne ki dhamki di hai", "expect": ["ppc:503", "ppc:506"], "language": "roman_ur"}
+{"id": "urdu-01", "type": "urdu", "query": "چوری کی سزا کیا ہے", "expect": ["ppc:378", "ppc:379"], "language": "ur"}
+{"id": "urdu-02", "type": "urdu", "query": "رشوت لینے کی سزا کیا ہے", "expect": ["ppc:161"], "language": "ur"}
+{"id": "urdu-03", "type": "urdu", "query": "قتل کی سزا کیا ہے", "expect": ["ppc:300", "ppc:302"], "language": "ur"}
+{"id": "urdu-04", "type": "urdu", "query": "بچے کو اغوا کرنے کی سزا", "expect": ["ppc:359", "ppc:361", "ppc:363", "ppc:364", "ppc:364-A", "ppc:365", "ppc:365-A"], "language": "ur"}
+{"id": "rights-01", "type": "rights", "query": "Do I have the right to a lawyer if the police arrest me?", "expect": ["constitution:10"]}
+{"id": "rights-02", "type": "rights", "query": "Is education free for children in Pakistan?", "expect": ["constitution:25A"]}
+{"id": "rights-03", "type": "rights", "query": "Can I demand information from a government department?", "expect": ["constitution:19A"]}
+{"id": "rights-04", "type": "rights", "query": "Do I have freedom of religion?", "expect": ["constitution:20"]}
+{"id": "rights-05", "type": "rights", "query": "Are all citizens equal before the law?", "expect": ["constitution:25"]}
+{"id": "rights-06", "type": "rights", "query": "Can the police keep me in custody without producing me before a magistrate?", "expect": ["constitution:10"], "must_include": ["twenty-four hours"]}
+{"id": "rights-07", "type": "rights", "query": "Is peaceful protest allowed?", "expect": ["constitution:16"]}
+{"id": "rights-08", "type": "rights", "query": "Is the privacy of my home protected?", "expect": ["constitution:14"]}
+{"id": "sched-01", "type": "schedule", "section": "ppc:379", "schedule": {"bailable": "Not bailable", "compoundable": "Not compoundable", "court": "Any Magistrate"}}
+{"id": "sched-02", "type": "schedule", "section": "ppc:489-F", "schedule": {"bailable": "Not bailable", "cognizable": "May arrest"}}
+{"id": "sched-03", "type": "schedule", "section": "ppc:420", "schedule": {"bailable": "Bailable", "compoundable": "permission"}}
+{"id": "sched-04", "type": "schedule", "section": "ppc:161", "schedule": {"cognizable": "Shall not arrest", "bailable": "Bailable"}}
+{"id": "sched-05", "type": "schedule", "section": "ppc:302", "schedule": {"bailable": "Not bailable", "court": "Session"}}
+{"id": "sched-06", "type": "schedule", "section": "ppc:406", "schedule": {"bailable": "Not bailable", "compoundable": "Not compoundable"}}
+{"id": "oos-01", "type": "out_of_scope", "query": "best biryani recipe in Lahore"}
+{"id": "oos-02", "type": "out_of_scope", "query": "who won the cricket match yesterday"}
+{"id": "oos-03", "type": "out_of_scope", "query": "write me a python script to sort a list"}
+{"id": "heldout-01", "split": "heldout", "type": "situation", "query": "A driver ran over a pedestrian because he was driving recklessly", "expect": ["ppc:279", "ppc:320", "ppc:319"]}
+{"id": "heldout-02", "split": "heldout", "type": "situation", "query": "Someone threw acid on a woman's face", "expect": ["ppc:336-A", "ppc:336-B"]}
+{"id": "heldout-03", "split": "heldout", "type": "situation", "query": "My brothers are refusing to give my sister her share of the inheritance", "expect": ["ppc:498-A"]}
+{"id": "heldout-04", "split": "heldout", "type": "situation", "query": "A girl is being forced to marry against her will", "expect": ["ppc:498-B"]}
+{"id": "heldout-05", "split": "heldout", "type": "situation", "query": "He bought a phone knowing it was stolen", "expect": ["ppc:410", "ppc:411"]}
+{"id": "heldout-06", "split": "heldout", "type": "situation", "query": "A witness lied under oath in court", "expect": ["ppc:191", "ppc:193"]}
+{"id": "heldout-07", "split": "heldout", "type": "situation", "query": "Kidnappers are demanding ransom for my son", "expect": ["ppc:365-A"]}
+{"id": "heldout-08", "split": "heldout", "type": "roman_ur", "query": "kisi ne meri dukaan ko aag laga di", "expect": ["ppc:435", "ppc:436", "ppc:425"], "language": "roman_ur"}
+{"id": "heldout-09", "split": "heldout", "type": "rights", "query": "Can I be punished twice for the same offence?", "expect": ["constitution:13"]}
+{"id": "heldout-10", "split": "heldout", "type": "rights", "query": "Is forced labour allowed in Pakistan?", "expect": ["constitution:11", "ppc:374"]}
+{"id": "heldout-11", "split": "heldout", "type": "rights", "query": "Can I move and live anywhere in the country?", "expect": ["constitution:15"]}
+{"id": "heldout-12", "split": "heldout", "type": "rights", "query": "Who can become a member of parliament?", "expect": ["constitution:62", "constitution:63"]}

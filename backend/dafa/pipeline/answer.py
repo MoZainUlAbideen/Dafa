@@ -92,10 +92,10 @@ class Pipeline:
                 s = self.store.get("constitution", ref_id)
             if s and s not in found:
                 found.append(s)
-        target_book = book or r.book_hint
         search_q = f"{query} {english_query or ''}"
         if len(found) < self.top_k:
-            for h in self.store.search(search_q, k=self.top_k, book=target_book, extra_terms=keywords):
+            hits = self.store.search(search_q, k=self.top_k, book=book, extra_terms=keywords, prefer=r.book_hint)
+            for h in hits:
                 if h.section not in found:
                     found.append(h.section)
                 if len(found) >= self.top_k:

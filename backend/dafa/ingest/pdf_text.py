@@ -26,17 +26,61 @@ class Line:
 
 
 def _norm_for_repeat(t: str) -> str:
-    return re.sub(r"\d+", "#", t.strip().lower())
+    # Ignore digits AND spacing: "CONSTITUTION OF PAKISTAN   5" and
+    # "16   CONSTITUTION OF PAKISTAN" are the same running header.
+    return re.sub(r"[\d\s]+", "", t.lower())
 
 
-def extract_lines(pdf_path: Path, small_ratio: float = 0.86) -> list[Line]:
-    import fitz  # PyMuPDF; only needed at ingestion time
+@dataclass
+class _Span:
+    x0: float
+    x1: float
+    ymid: float
+    size: float
+    text: str
+    bold: bool
+
+
+def group_into_lines(spans: list[_Span]) -> list[list[_Span]]:
+    """Group spans that share a baseline into one visual line, ordered left to right.
+
+    Why not use the PDF's own lines/blocks: in the PPC PDF the bold section heading
+    ("302. Punishment of qatl-e-amd.") and the first words of its body sit on the
+    same printed line but in separate blocks with slightly different y, so block
+    order put the body BEFORE the heading (bug found on section 302)."""
+    lines: list[list[_Span]] = []
+    for sp in sorted(spans, key=lambda s: (s.ymid, s.x0)):
+        if lines and abs(sp.ymid - lines[-1][0].ymid) <= max(2.5, 0.35 * sp.size):
+            lines[-1].append(sp)
+        else:
+            lines.append([sp])
+    return [sorted(ln, key=lambda s: s.x0) for ln in lines]
+
+
+def _join(spans: list[_Span]) -> str:
+    out = ""
+    prev: _Span | None = None
+    for sp in spans:
+        t = sp.text
+        if prev is not None and out and not out.endswith(" ") and not t.startswith(" ") and sp.x0 - prev.x1 > 1.0:
+            out += " "
+        out += t
+        prev = sp
+    return re.sub(r"\s+", " ", out).strip()
+
+
+def extract_lines(pdf_path: Path, small_ratio: float = 0.75) -> list[Line]:
+    """small_ratio: spans smaller than this fraction of the body size are dropped.
+    Measured on the real PDFs: PPC body 13pt / footnotes 7-9pt / explanations 11pt;
+    Constitution body 11pt / margin notes + footnotes 8pt / superscripts 4-5.5pt.
+    (0.86 was too strict and dropped the PPC's 11pt explanation text.)"""
+    import pymupdf as fitz  # only needed at ingestion time
 
     doc = fitz.open(pdf_path)
     sizes: Counter[float] = Counter()
     pages = []
     for page in doc:
-        d = page.get_text("dict", sort=True)
+        d = page.get_text("dict")
         pages.append(d)
         for block in d["blocks"]:
             for line in block.get("lines", []):
@@ -48,24 +92,21 @@ def extract_lines(pdf_path: Path, small_ratio: float = 0.86) -> list[Line]:
 
     raw: list[Line] = []
     for pno, d in enumerate(pages, start=1):
+        spans: list[_Span] = []
         for block in d["blocks"]:
             for line in block.get("lines", []):
-                kept, bold_chars, total_chars, max_size = [], 0, 0, 0.0
-                for span in line["spans"]:
-                    txt = span["text"]
-                    if not txt.strip():
-                        kept.append(txt)
-                        continue
-                    if span["size"] < cutoff:
-                        continue  # footnote text or superscript marker
-                    kept.append(txt)
-                    total_chars += len(txt)
-                    max_size = max(max_size, span["size"])
-                    if span["flags"] & 16 or "bold" in span["font"].lower():
-                        bold_chars += len(txt)
-                text = "".join(kept).strip()
-                if text:
-                    raw.append(Line(pno, text, bold_chars > total_chars * 0.6, max_size))
+                for s in line["spans"]:
+                    if not s["text"].strip() or s["size"] < cutoff:
+                        continue  # blank, footnote text or superscript marker
+                    x0, y0, x1, y1 = s["bbox"]
+                    bold = bool(s["flags"] & 16) or "bold" in s["font"].lower()
+                    spans.append(_Span(x0, x1, (y0 + y1) / 2, s["size"], s["text"], bold))
+        for ln in group_into_lines(spans):
+            text = _join(ln)
+            if text:
+                total = sum(len(s.text) for s in ln)
+                bold_chars = sum(len(s.text) for s in ln if s.bold)
+                raw.append(Line(pno, text, bold_chars > total * 0.6, max(s.size for s in ln)))
 
     # Drop running headers/footers: identical (digits ignored) lines on >25% of pages.
     n_pages = len(pages)
@@ -83,7 +124,8 @@ def extract_lines(pdf_path: Path, small_ratio: float = 0.86) -> list[Line]:
     return out
 
 
-AMEND_MARK_RE = re.compile(r"\d{0,2}\[|\]")
+# "11[", "4 [" (superscript footnote number + bracket), and closing "]".
+AMEND_MARK_RE = re.compile(r"(?<![\w(])\d{1,2}\s?\[|\[|\]")
 OMIT_RE = re.compile(r"\*\s*\*\s*\*(\s*\*)*")
 
 

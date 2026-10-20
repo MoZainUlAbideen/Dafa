@@ -46,12 +46,13 @@ def route(query: str) -> Route:
         if m:  # a bare "302" most often means the PPC
             refs.append(("ppc", normalise_id(m.group(1))))
 
+    # Soft hint only (used as a score boost, never a filter). "police" is NOT a
+    # Penal Code signal on its own: "lawyer if the police arrest me" is a
+    # Constitution (Article 10) question (bug found by evals rights-01/06).
     q = query.lower()
-    hint = None
-    if re.search(r"constitution|aain|aaeen|fundamental right|article|parliament|assembly|senate|prime minister|president|supreme court|high court|amendment", q):
-        hint = "constitution"
-    if re.search(r"ppc|penal|crime|offence|offense|punish|saza|jail|fir|bail|zamanat|dafa|police", q):
-        hint = "ppc" if hint is None else None  # both mentioned -> no hint
+    const = re.search(r"constitution|aain|aaeen|\bright(s)?\b|huqooq|freedom|fundamental|article|parliament|senate|prime minister|president|supreme court|high court|amendment|حقوق", q)
+    penal = re.search(r"\bppc\b|penal|crime|offence|offense|punish|saza|jail|\bfir\b|bail|zamanat|dafa|سزا", q)
+    hint = "constitution" if const and not penal else "ppc" if penal and not const else None
     seen, uniq = set(), []
     for r in refs:
         if r not in seen:
